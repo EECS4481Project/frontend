@@ -1,13 +1,56 @@
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
+
+import Home from "./home/Home";
+import Login from "./agent/login/Login";
+import Dashboard from "./agent/dashboard/Dashboard";
+import Chat from "./chat/Chat";
+import Queue from "./queue/Queue";
+import MessagingDashboard from "./agent/dashboard/messages/MessagingDashboard";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Home/>,
+  },
+  {
+    path: "/login",
+    element: <Login />
+  },
+  {
+    path: "/dashboard",
+    element: <Dashboard />,
+    children: [
+      {
+        path: "chat",
+        element: <Chat/>,
+      },
+      {
+        path: "messages",
+        element: <MessagingDashboard />
+      },
+    ]
+  },
+  {
+    path: "/queue",
+    element: <Queue />
+  },
+  {
+    path: "/chat",
+    element: <Chat />
+  },
+  {
+    path: "*", // Default route
+    element: <Home/>,
+  },
+]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <RouterProvider router={router}/>
   </React.StrictMode>
 );
 
