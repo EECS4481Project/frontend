@@ -1,5 +1,28 @@
 ## Getting Started
-- Main entry point is `/public/index.html`, which renders `/src/App.js`, which displays a component based on the current route.
+1. Install [NodeJS](https://nodejs.org/en/download/).
+2. Run `$ npm install` in the main directory to download all dependencies.
+
+
+## Locally viewing the website
+1. In the main directory run `$ npm start`.
+2. You'll probably want to start the backend in a separate terminal session so the webpage can make API calls.
+3. Navigate to `localhost:3001` in your browser to view the home page.
+
+
+## Locally testing the website
+1. In the main directory run `$ npm test`
+
+
+## Project Structure
+- Main entry point is `/public/index.html`, which renders `/src/index.js`, which displays a component based on the current route.
+- `/public` contains assets for the website.
+- JS files in `/src/`, along with their corresponding `.css` file make up a component.
+- Components are organized into sub-folders that somewhat resemble their route/path.
+- `/src/__tests__` contains [Jest](https://jestjs.io) tests.
+
+## Random Notes:
+- You can use relative paths for API calls, as the `proxy` field in `package.json` will handle forwarding the request to your locally running backend.
+
 
 ## If you haven't used React before
 - A component is just a javascript file that renders something. Components can be nested in other components.
@@ -14,42 +37,25 @@
   - [Forms](https://reactjs.org/docs/forms.html): You can automatically set a variable to the value of an input.
   - [Routing](https://reactrouter.com/en/main/start/tutorial): You can mostly copy/paste existing `Route` components in the `/src/Router.js` file, but for anything more complex these docs should help.
 
-## Available Scripts
 
-In the project directory, you can run:
+## Git cheat sheet incase you're new to git:
+- Getting started:
+  - Download the repo: `$ git clone https://github.com/EECS4481Project/backend.git`
+  - Track the origin: `$ git remote add origin https://github.com/EECS4481Project/backend.git`
+  - Create & checkout a new branch `$ git checkout -b BRANCH_NAME`
+- Syncing from remote (if working on the same branch as someone else):
+  - `git pull origin BRANCH_NAME` to pull any changes in the repo to your local workspace.
+  - In case of a merge conflict:
+    - The easiest way to handle this is probably via [VSCode](https://stackoverflow.com/a/44682439)
+    - Otherwise, you'll have to manually fix all the merge conflicts
+- Making changes to the remote branch:
+  - `git add some_file some_other_file etc` to add the file to your commit
+  - `git commit -m "your_commit_msg"` to create the commit
+  - `git push origin BRANCH_NAME` to push your changes to the remote branch
+- Pushing changes to prod:
+  - Using the GitHub UI, make a pull request to merge your changes to the `prod` branch.
+  Then other team members can review your code and merge the changes.
 
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3001](http://localhost:3001) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
 ## Learn More -- boilerplate from create react app
 
