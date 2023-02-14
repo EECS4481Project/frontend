@@ -64,7 +64,7 @@ function LoginForm() {
   return (
     <div style={{ minHeight: 180 }}>
       {isLoading && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}><CircularProgress /></div>}
-      {!isLoading && <div><Form onSubmit={() => login(username, password)}>
+      {!isLoading && <div><Form onSubmit={(e) => {e.preventDefault(); login(username, password)}}>
         <FormControl required>
           <FormLabel>Username</FormLabel>
           <Input
@@ -96,6 +96,7 @@ function RegisterForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [confirmedNewPassword, setConfirmedNewPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const passwordRequirementOrder = [
@@ -145,10 +146,14 @@ function RegisterForm() {
   }, [newPassword])
 
 
-  const register = (username, password, newPassword) => {
+  const register = (username, password, newPassword, confirmedNewPassword) => {
     setIsLoading(true);
     if (username === '' || password === '') {
       setErrMsg("Username & Password can't be blank.");
+      setIsLoading(false);
+      return;
+    } else if (newPassword !== confirmedNewPassword) {
+      setErrMsg("New passwords don't match.");
       setIsLoading(false);
       return;
     }
@@ -171,36 +176,46 @@ function RegisterForm() {
   return (
     <div style={{ minHeight: 180 }}>
       {isLoading && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}><CircularProgress /></div>}
-      {!isLoading && <div><Form onSubmit={() => register(username, password, newPassword)}>
+      {!isLoading && <div><Form onSubmit={(e) => {e.preventDefault(); register(username, password, newPassword, confirmedNewPassword)}}>
         <FormControl required>
-        <FormLabel>Username</FormLabel>
-        <Input
-          name="username"
-          type="username"
-          required
-          placeholder="Username"
-          onChange={(e) => setUsername(e.target.value)}
-        />
+          <FormLabel>Username</FormLabel>
+          <Input
+            name="username"
+            type="username"
+            required
+            placeholder="Username"
+            onChange={(e) => setUsername(e.target.value)}
+          />
         </FormControl>
         <FormControl required>
-        <FormLabel>Password</FormLabel>
-        <Input
-          name="password"
-          type="password"
-          required
-          placeholder="Password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
+          <FormLabel>Password</FormLabel>
+          <Input
+            name="password"
+            type="password"
+            required
+            placeholder="Password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </FormControl>
         <FormControl required>
-        <FormLabel>New Password</FormLabel>
-        <Input
-          name="newPassword"
-          type="password"
-          required
-          placeholder="New Password"
-          onChange={(e) => setNewPassword(e.target.value)}
-        />
+          <FormLabel>New Password</FormLabel>
+          <Input
+            name="newPassword"
+            type="password"
+            required
+            placeholder="New Password"
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
+        </FormControl>
+        <FormControl required>
+          <FormLabel>Confirm New Password</FormLabel>
+          <Input
+            name="newPassword"
+            type="password"
+            required
+            placeholder="New Password"
+            onChange={(e) => setConfirmedNewPassword(e.target.value)}
+          />
         </FormControl>
         <Typography textColor="neutral" fontSize="sm">Password Requirements:</Typography>
         {passwordRequirementOrder.map((name) => <Typography color={passwordReqs[name]["met"] ? "neutral:500" : "neutral"} fontSize="sm">- {passwordReqs[name]["text"]}</Typography>)}
