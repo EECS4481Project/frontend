@@ -132,6 +132,10 @@ function RegisterForm() {
       setErrMsg("New passwords don't match.");
       setIsLoading(false);
       return;
+    } else if (newPassword === password) {
+      setErrMsg("Your new password must differ from your current password.");
+      setIsLoading(false);
+      return;
     }
     axios.post('/auth/register', {
       username, password, newPassword
