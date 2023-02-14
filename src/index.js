@@ -9,6 +9,8 @@ import Dashboard from "./agent/dashboard/Dashboard";
 import Chat from "./chat/Chat";
 import Queue from "./queue/Queue";
 import MessagingDashboard from "./agent/dashboard/messages/MessagingDashboard";
+import { CssBaseline, CssVarsProvider, Sheet, useColorScheme } from "@mui/joy";
+import { Box } from "@mui/system";
 
 const router = createBrowserRouter([
   {
@@ -50,7 +52,10 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router}/>
+    <CssVarsProvider defaultMode='system'>
+      <CssBaseline></CssBaseline>
+      <RouterProvider router={router}/>
+    </CssVarsProvider>
   </React.StrictMode>
 );
 
