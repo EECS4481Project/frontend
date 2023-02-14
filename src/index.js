@@ -11,6 +11,7 @@ import Queue from "./queue/Queue";
 import MessagingDashboard from "./agent/dashboard/messages/MessagingDashboard";
 import { CssBaseline, CssVarsProvider, Sheet, useColorScheme } from "@mui/joy";
 import { Box } from "@mui/system";
+import AdminDashboard from "./agent/dashboard/admin/AdminDashboard";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
       {
         path: "messages",
         element: <MessagingDashboard />
+      },
+      {
+        path: "admin",
+        element: <AdminDashboard />
       },
     ]
   },

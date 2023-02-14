@@ -10,6 +10,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ClickAwayListener from '@mui/base/ClickAwayListener';
 import PopperUnstyled from '@mui/base/PopperUnstyled';
 import axios from 'axios';
+import Chat from '../../chat/Chat';
 
 
 
@@ -17,23 +18,26 @@ function Dashboard() {
   // Check if user is signed in
   const navigate = useNavigate();
   const location = useLocation();
-  console.log(location.pathname);
   const [agent, setAgent] = useState(getSignedInAgent());
+    
   if (agent === null) {
     return <Navigate to="/login" />;
-  } else if (location.pathname === '/dashboard') {
+  } else if (location.pathname === '/dashboard' && !agent.isAdmin) {
+    // TODO: This breaks history -- should instead display chat or admin panel depending on user type
     return <Navigate to="/dashboard/chat" />;
+  } else if (location.pathname === '/dashboard' && agent.isAdmin) {
+    return <Navigate to="/dashboard/admin" />
   }
   return (
     <div>
       <Stack direction="row" paddingLeft={4} paddingRight={4} paddingTop={1} paddingBottom={1} width='100%' sx={{ backgroundColor: 'background.level1', boxShadow: 'xs' }}>
         <Typography level="h3">Dashboard</Typography>
         <Divider orientation='vertical' sx={{ ml: 3 }} />
-        <Stack direction="row" justifyContent="center" display="flex" width="100%" sx={{ ml: 3, mr: 3 }}>
+        {!agent.isAdmin && <Stack direction="row" justifyContent="center" display="flex" width="100%" sx={{ ml: 3, mr: 3 }}>
           <Button color={location.pathname === "/dashboard/chat" ? "primary" : "neutral"} onClick={() => { navigate('/dashboard/chat') }} variant="plain" size="sm" sx={{ mr: 1 }}>Chat</Button>
           <Button color={location.pathname === "/dashboard/messages" ? "primary" : "neutral"} onClick={() => { navigate('/dashboard/messages') }} size="sm" variant="plain">Messages</Button>
-        </Stack>
-
+        </Stack>}
+        {agent.isAdmin && <Stack direction="row" justifyContent="center" display="flex" width="100%" sx={{ ml: 3, mr: 3 }} />}
         <Typography sx={{ mt: '7px' /* hacky way to center it */ }}>{agent.username}</Typography>
         <ProfileMenu />
       </Stack>
