@@ -1,7 +1,14 @@
 import './Dashboard.css';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Navigate, Outlet } from 'react-router-dom';
+import { getSignedInAgent } from '../utils';
+import { useState } from 'react';
 
 function Dashboard() {
+  // Check if user is signed in
+  const [agent, setAgent] = useState(getSignedInAgent());
+  if (agent === null) {
+    return <Navigate to="/login"/>;
+  }
   return (
     <div>
       <h1>Dashboard</h1>
