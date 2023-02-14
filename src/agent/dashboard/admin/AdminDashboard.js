@@ -1,6 +1,6 @@
-import { Button, Card, CircularProgress, Divider, FormControl, FormLabel, Grid, Input, Typography } from '@mui/joy';
+import { Button, Card, CircularProgress, Divider, FormControl, FormLabel, Grid, Input, List, ListItem, Sheet, Typography } from '@mui/joy';
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { getSignedInAgent } from '../../utils';
 
@@ -13,36 +13,80 @@ function AdminDashboard() {
         return <Navigate to="/dashboard" />;
     }
     return (
-        <Grid container spacing={2} paddingLeft={1} paddingRight={1} paddingTop={1} sx={{ flexGrow: 1 }}>
-            <Grid xs={4}>
-                <Card>
+        <Grid container alignItems="stretch" spacing={2} paddingLeft={1} paddingRight={1} paddingTop={1}>
+            <Grid item xs={4} style={{display: 'flex'}}>
+                <Card style={{display: 'flex', justifyContent: 'space-between', flexDirection: 'column', width: '100%'}}>
                     <NewAgentForm />
                 </Card>
             </Grid>
-            <Grid xs={4}>
-                <Card>
+            <Grid item xs={4} style={{display: 'flex'}}>
+                <Card style={{display: 'flex', justifyContent: 'space-between', flexDirection: 'column', width: '100%'}}>
                     <DeleteAgentForm />
                 </Card>
             </Grid>
-            <Grid xs={4}>
-                <Card>
+            <Grid xs={4} style={{display: 'flex'}}>
+                <Card style={{display: 'flex', justifyContent: 'space-between', flexDirection: 'column', width: '100%'}}>
                     <UnregisterAgentForm />
                 </Card>
             </Grid>
             <Grid xs={6}>
                 <Card>
-                    <Typography level='h6'>Registered Agents</Typography>
-                    <Typography color="neutral" fontSize='sm'>All agents who have registered (ie. have signed into account).</Typography>
+                    <AgentList endpoint='/admin/all_registered_users' title='Registered Agents'
+                    desc='All agents who have registered (ie. have signed into account).' />
                 </Card>
             </Grid>
             <Grid xs={6}>
                 <Card>
-                    <Typography level='h6'>Non-Registered Agents</Typography>
-                    <Typography color="neutral">All agents who have not yet registered (ie. haven't signed into account).</Typography>
+                    <AgentList endpoint='/admin/all_nonregistered_users' title='Non-Registered Agents'
+                    desc="All agents who have not yet registered (ie. haven't signed into account)." />
                 </Card>
             </Grid>
         </Grid>
     );
+}
+
+function AgentList(props) {
+    const [isLoading, setIsLoading] = useState(false);
+    const [users, setUsers] = useState([]);
+    const [errMsg, setErrMsg] = useState("");
+
+    const getUsers = () => {
+        setIsLoading(true);
+        setErrMsg("");
+        axios.get(props.endpoint).then(res => {
+            setUsers(res.data);
+            console.log(users);
+        }).catch(err => {
+            setErrMsg("Failed to load agents. Try again later.");
+        }).finally(() => {
+            setIsLoading(false);
+        })
+    }
+
+    useEffect(() => {
+        getUsers();
+    }, []);
+
+    return <div>
+        <Typography level='h6'>{props.title}</Typography>
+        <Typography color="neutral" fontSize='sm'>{props.desc}</Typography>
+        <Divider sx={{ mt: '10px', mb: '10px' }} />
+        {isLoading && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}><CircularProgress /></div>}
+        {!isLoading && <div>
+            <Button fullWidth onClick={getUsers}>Refresh</Button>
+            <Sheet variant="soft" sx={{height: '170px', mt: 1, overflow: 'auto', borderRadius: 4}}>
+            <List>
+                {users.map((value, index) => (
+                    <ListItem key={index}>
+                        {value.username + " - " + value.firstName + " " + value.lastName}
+                    </ListItem>
+                ))}
+            </List>
+            </Sheet>
+            {errMsg !== "" && <Typography color="danger" fontSize="sm" marginTop={1}>{errMsg}</Typography>}
+        </div>
+        }
+    </div>;
 }
 
 function UnregisterAgentForm() {
@@ -78,23 +122,23 @@ function UnregisterAgentForm() {
         <Typography color="neutral" fontSize='sm'>Set an agent to "unregistered" and reset their password.</Typography>
         <Divider sx={{ mt: '10px', mb: '10px' }} />
         {isLoading && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}><CircularProgress /></div>}
-            {!isLoading && <form onSubmit={e => { e.preventDefault(); unregisterUser(username) }}>
-                <FormControl>
-                    <FormLabel>Username</FormLabel>
-                    <Input required type="username" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
-                </FormControl>
-                <FormControl>
-                    <FormLabel>Password</FormLabel>
-                    <Input readonly type="text" placeholder="To be generated" value={password} style={{ color: 'var(--joy-palette-neutral-200)' }}
-                        endDecorator={
-                            <Button color='neutral' onClick={() => navigator.clipboard.writeText(password)}>Copy</Button>
-                        }
-                    />
-                </FormControl>
-                {errMsg !== "" && <Typography color="danger" fontSize="sm" marginTop={1}>{errMsg}</Typography>}
-                {successMsg !== "" && <Typography color="success" fontSize="sm" marginTop={1}>{successMsg}</Typography>}
-                <Button type='submit' sx={{ mt: 1, width: '100%' }}>Unregister Agent</Button>
-            </form>}
+        {!isLoading && <form onSubmit={e => { e.preventDefault(); unregisterUser(username) }}>
+            <FormControl>
+                <FormLabel>Username</FormLabel>
+                <Input required type="username" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
+            </FormControl>
+            <FormControl>
+                <FormLabel>Password</FormLabel>
+                <Input readonly type="text" placeholder="To be generated" value={password} style={{ color: 'var(--joy-palette-neutral-200)' }}
+                    endDecorator={
+                        <Button color='neutral' onClick={() => navigator.clipboard.writeText(password)}>Copy</Button>
+                    }
+                />
+            </FormControl>
+            {errMsg !== "" && <Typography color="danger" fontSize="sm" marginTop={1}>{errMsg}</Typography>}
+            {successMsg !== "" && <Typography color="success" fontSize="sm" marginTop={1}>{successMsg}</Typography>}
+            <Button type='submit' sx={{ mt: 1, width: '100%' }}>Unregister Agent</Button>
+        </form>}
     </div>
 }
 
@@ -125,18 +169,18 @@ function DeleteAgentForm() {
 
     return <div>
         <Typography level='h6'>Delete Agent</Typography>
-        <Typography color="neutral" fontSize='sm'>Remove an agents account.<br/>You can also remove admin accounts.</Typography>
+        <Typography color="neutral" fontSize='sm'>Remove an agents account.<br />You can also remove admin accounts.</Typography>
         <Divider sx={{ mt: '10px', mb: '10px' }} />
         {isLoading && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}><CircularProgress /></div>}
-            {!isLoading && <form onSubmit={e => { e.preventDefault(); deleteUser(username) }}>
-                <FormControl>
-                    <FormLabel>Username</FormLabel>
-                    <Input required type="username" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
-                </FormControl>
-                {errMsg !== "" && <Typography color="danger" fontSize="sm" marginTop={1}>{errMsg}</Typography>}
-                {successMsg !== "" && <Typography color="success" fontSize="sm" marginTop={1}>{successMsg}</Typography>}
-                <Button type='submit' sx={{ mt: 1, width: '100%' }}>Delete Agent</Button>
-            </form>}
+        {!isLoading && <form onSubmit={e => { e.preventDefault(); deleteUser(username) }}>
+            <FormControl>
+                <FormLabel>Username</FormLabel>
+                <Input required type="username" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
+            </FormControl>
+            {errMsg !== "" && <Typography color="danger" fontSize="sm" marginTop={1}>{errMsg}</Typography>}
+            {successMsg !== "" && <Typography color="success" fontSize="sm" marginTop={1}>{successMsg}</Typography>}
+            <Button type='submit' sx={{ mt: 1, width: '100%' }}>Delete Agent</Button>
+        </form>}
     </div>
 }
 
