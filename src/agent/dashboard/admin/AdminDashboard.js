@@ -6,7 +6,7 @@ import { getSignedInAgent } from '../../utils';
 
 function AdminDashboard() {
     const [agent, setAgent] = useState(getSignedInAgent());
-    
+
     if (agent === null) {
         return <Navigate to="/login" />;
     } else if (!agent.isAdmin) {
@@ -21,8 +21,7 @@ function AdminDashboard() {
             </Grid>
             <Grid xs={4}>
                 <Card>
-                    <Typography level='h6'>Delete Agent</Typography>
-                    <Typography color="neutral" fontSize='sm'>Remove an agents account.</Typography>
+                    <DeleteAgentForm />
                 </Card>
             </Grid>
             <Grid xs={4}>
@@ -45,6 +44,48 @@ function AdminDashboard() {
             </Grid>
         </Grid>
     );
+}
+
+function DeleteAgentForm() {
+    const [username, setUsername] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [errMsg, setErrMsg] = useState("");
+    const [successMsg, setSuccessMsg] = useState("");
+
+    const deleteUser = (username) => {
+        setIsLoading(true);
+        setErrMsg("");
+        setSuccessMsg("");
+        axios.post('/admin/delete_user', {
+            username
+        }).then(res => {
+            setSuccessMsg("Deleted " + username);
+        }).catch(err => {
+            if (err.response.status === 404) {
+                setErrMsg("Username not found");
+            } else {
+                setErrMsg("Something went wrong. Try again later.");
+            }
+        }).finally(() => {
+            setIsLoading(false);
+        })
+    }
+
+    return <div>
+        <Typography level='h6'>Delete Agent</Typography>
+        <Typography color="neutral" fontSize='sm'>Remove an agents account.</Typography>
+        <Divider sx={{ mt: '10px', mb: '10px' }} />
+        {isLoading && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}><CircularProgress /></div>}
+            {!isLoading && <form onSubmit={e => { e.preventDefault(); deleteUser(username) }}>
+                <FormControl>
+                    <FormLabel>Username</FormLabel>
+                    <Input required type="username" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
+                </FormControl>
+                {errMsg !== "" && <Typography color="danger" fontSize="sm" marginTop={1}>{errMsg}</Typography>}
+                {successMsg !== "" && <Typography color="success" fontSize="sm" marginTop={1}>{successMsg}</Typography>}
+                <Button type='submit' sx={{ mt: 1, width: '100%' }}>Delete Agent</Button>
+            </form>}
+    </div>
 }
 
 function NewAgentForm() {
@@ -77,34 +118,34 @@ function NewAgentForm() {
     return (
         <div>
             <Typography level='h6'>Create Agent</Typography>
-                    <Typography color="neutral" fontSize='sm'>Create a new agent with a random password.
-                    They will then set their own password during registration</Typography>
-                    <Divider sx={{mt: '10px', mb: '10px'}}/>
-                    {isLoading && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}><CircularProgress /></div>}
-                    {!isLoading && <form onSubmit={e => {e.preventDefault(); registerUser(username, firstName, lastName)}}>
-                        <FormControl>
-                            <FormLabel>Username</FormLabel>
-                            <Input required type="username" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
-                        </FormControl>
-                        <FormControl>
-                            <FormLabel>First Name</FormLabel>
-                            <Input required type="text" placeholder="John" value={firstName} onChange={e => setFirstName(e.target.value)} />
-                        </FormControl>
-                        <FormControl>
-                            <FormLabel>Last Name</FormLabel>
-                            <Input required type="text" placeholder="Doe" value={lastName} onChange={e => setLastName(e.target.value)} />
-                        </FormControl>
-                        <FormControl>
-                            <FormLabel>Password</FormLabel>
-                            <Input readonly type="text" placeholder="To be generated" value={password} style={{color: 'var(--joy-palette-neutral-200)'}}
-                            endDecorator={
-                                <Button color='neutral' onClick={() => navigator.clipboard.writeText(password)}>Copy</Button>
-                            }
-                            />
-                        </FormControl>
-                        {errMsg !== "" && <Typography color="danger" fontSize="sm" marginTop={1}>{errMsg}</Typography>}
-                        <Button type='submit' sx={{ mt: 1, width: '100%'}}>Register</Button>
-                    </form>}
+            <Typography color="neutral" fontSize='sm'>Create a new agent with a random password.
+                They will then set their own password during registration</Typography>
+            <Divider sx={{ mt: '10px', mb: '10px' }} />
+            {isLoading && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}><CircularProgress /></div>}
+            {!isLoading && <form onSubmit={e => { e.preventDefault(); registerUser(username, firstName, lastName) }}>
+                <FormControl>
+                    <FormLabel>Username</FormLabel>
+                    <Input required type="username" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
+                </FormControl>
+                <FormControl>
+                    <FormLabel>First Name</FormLabel>
+                    <Input required type="text" placeholder="John" value={firstName} onChange={e => setFirstName(e.target.value)} />
+                </FormControl>
+                <FormControl>
+                    <FormLabel>Last Name</FormLabel>
+                    <Input required type="text" placeholder="Doe" value={lastName} onChange={e => setLastName(e.target.value)} />
+                </FormControl>
+                <FormControl>
+                    <FormLabel>Password</FormLabel>
+                    <Input readonly type="text" placeholder="To be generated" value={password} style={{ color: 'var(--joy-palette-neutral-200)' }}
+                        endDecorator={
+                            <Button color='neutral' onClick={() => navigator.clipboard.writeText(password)}>Copy</Button>
+                        }
+                    />
+                </FormControl>
+                {errMsg !== "" && <Typography color="danger" fontSize="sm" marginTop={1}>{errMsg}</Typography>}
+                <Button type='submit' sx={{ mt: 1, width: '100%' }}>Register</Button>
+            </form>}
         </div>
     );
 }
