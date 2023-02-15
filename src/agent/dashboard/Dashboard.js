@@ -63,7 +63,7 @@ function ProfileMenu() {
 
   const handleLogout = () => {
     handleClose();
-    axios.post('/logout').then(res => {
+    axios.post('/api/auth/logout').then(res => {
       navigate('/login');
     }).catch(err => {
       navigate('/login');
@@ -165,7 +165,7 @@ function ChangePasswordModal(props) {
       setIsLoading(false);
       return;
     }
-    axios.post('/auth/change_password', {password: newPassword}).then(res => {
+    axios.post('/api/auth/change_password', {password: newPassword}).then(res => {
       setIsLoading(false);
       props.setOpen(false);
     }).catch(err => {

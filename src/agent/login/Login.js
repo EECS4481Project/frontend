@@ -44,7 +44,7 @@ function LoginForm() {
       setIsLoading(false);
       return;
     }
-    axios.post('/auth/login', {
+    axios.post('/api/auth/login', {
       username, password
     }).then((res) => {
       navigate("/dashboard");
@@ -137,7 +137,7 @@ function RegisterForm() {
       setIsLoading(false);
       return;
     }
-    axios.post('/auth/register', {
+    axios.post('/api/auth/register', {
       username, password, newPassword
     }).then((res) => {
       navigate("/dashboard");

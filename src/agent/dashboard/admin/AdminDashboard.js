@@ -31,13 +31,13 @@ function AdminDashboard() {
             </Grid>
             <Grid xs={6}>
                 <Card>
-                    <AgentList endpoint='/admin/all_registered_users' title='Registered Agents'
+                    <AgentList endpoint='/api/admin/all_registered_users' title='Registered Agents'
                     desc='All agents who have registered (ie. have signed into account).' />
                 </Card>
             </Grid>
             <Grid xs={6}>
                 <Card>
-                    <AgentList endpoint='/admin/all_nonregistered_users' title='Non-Registered Agents'
+                    <AgentList endpoint='/api/admin/all_nonregistered_users' title='Non-Registered Agents'
                     desc="All agents who have not yet registered (ie. haven't signed into account)." />
                 </Card>
             </Grid>
@@ -101,7 +101,7 @@ function UnregisterAgentForm() {
         setErrMsg("");
         setSuccessMsg("");
         setPassword("");
-        axios.post('/admin/unregister_user', {
+        axios.post('/api/admin/unregister_user', {
             username
         }).then(res => {
             setPassword(res.data.password);
@@ -152,7 +152,7 @@ function DeleteAgentForm() {
         setIsLoading(true);
         setErrMsg("");
         setSuccessMsg("");
-        axios.post('/admin/delete_user', {
+        axios.post('/api/admin/delete_user', {
             username
         }).then(res => {
             setSuccessMsg("Deleted " + username);
@@ -199,7 +199,7 @@ function NewAgentForm() {
         setSuccessMsg("");
         setErrMsg("");
         setPassword("");
-        axios.post('/admin/register_temp_user', {
+        axios.post('/api/admin/register_temp_user', {
             username, firstName, lastName
         }).then(res => {
             setSuccessMsg("Registered " + username);
