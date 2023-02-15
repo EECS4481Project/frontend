@@ -29,16 +29,22 @@ function AdminDashboard() {
                     <UnregisterAgentForm />
                 </Card>
             </Grid>
-            <Grid xs={6}>
+            <Grid xs={4}>
                 <Card>
                     <AgentList endpoint='/api/admin/all_registered_users' title='Registered Agents'
                     desc='All agents who have registered (ie. have signed into account).' />
                 </Card>
             </Grid>
-            <Grid xs={6}>
+            <Grid xs={4}>
                 <Card>
                     <AgentList endpoint='/api/admin/all_nonregistered_users' title='Non-Registered Agents'
                     desc="All agents who have not yet registered (ie. haven't signed into account)." />
+                </Card>
+            </Grid>
+            <Grid xs={4}>
+                <Card>
+                    <AgentList endpoint='/api/admin/all_deleted' title='Deleted Agents'
+                    desc="All agents who have been deleted." />
                 </Card>
             </Grid>
         </Grid>
@@ -169,7 +175,7 @@ function DeleteAgentForm() {
 
     return <div>
         <Typography level='h6'>Delete Agent</Typography>
-        <Typography color="neutral" fontSize='sm'>Remove an agents account.<br />You can also remove admin accounts.</Typography>
+        <Typography color="neutral" fontSize='sm'>Delete an agent or admins account.</Typography>
         <Divider sx={{ mt: '10px', mb: '10px' }} />
         {isLoading && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}><CircularProgress /></div>}
         {!isLoading && <form onSubmit={e => { e.preventDefault(); deleteUser(username) }}>
