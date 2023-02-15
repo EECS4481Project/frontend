@@ -7,7 +7,7 @@ const SOME_VAR = "Home Page";
 
 function Home() {
   const [valueFromEndpoint, setValueFromEndpoint] = useState("Loading...");
-  axios.get('/health_check').then(res => {
+  axios.get('/api/health_check').then(res => {
     if (res.status === 200) {
       setValueFromEndpoint("Successfully reached backend w/ API call!");
     } else {
