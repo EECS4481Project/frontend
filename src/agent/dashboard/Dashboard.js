@@ -10,7 +10,6 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ClickAwayListener from '@mui/base/ClickAwayListener';
 import PopperUnstyled from '@mui/base/PopperUnstyled';
 import axios from 'axios';
-import Chat from '../../chat/Chat';
 
 
 
@@ -18,7 +17,7 @@ function Dashboard() {
   // Check if user is signed in
   const navigate = useNavigate();
   const location = useLocation();
-  const [agent, setAgent] = useState(getSignedInAgent());
+  const agent = getSignedInAgent();
     
   if (agent === null) {
     return <Navigate to="/login" />;
@@ -203,7 +202,7 @@ function ChangePasswordModal(props) {
             <Input required type="password" placeholder="Password" onChange={e => setConfirmedNewPassword(e.target.value)} />
           </FormControl>
           <Typography textColor="neutral" fontSize="sm">Password Requirements:</Typography>
-          {passwordReqs.requirements.map((name) => <Typography color={passwordReqs[name]["met"] ? "neutral:500" : "neutral"} fontSize="sm">- {passwordReqs[name]["text"]}</Typography>)}
+          {passwordReqs.requirements.map((name) => <Typography key={name} color={passwordReqs[name]["met"] ? "neutral:500" : "neutral"} fontSize="sm">- {passwordReqs[name]["text"]}</Typography>)}
           {errMsg !== "" && <Typography color="danger" fontSize="sm" marginTop={1}>{errMsg}</Typography>}
           <FormControl>
             {!passwordReqsMet && <Button disabled sx={{ mt: 1 }}>Change Password</Button>}
