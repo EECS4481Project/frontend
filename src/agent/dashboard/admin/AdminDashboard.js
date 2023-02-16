@@ -1,11 +1,15 @@
-import { Button, Card, CircularProgress, Divider, FormControl, FormLabel, Grid, Input, List, ListItem, Sheet, Typography } from '@mui/joy';
+import { Button, Card, CircularProgress, Divider, FormControl, FormLabel, Grid, Input, List, ListItem, Sheet, Table, Typography } from '@mui/joy';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { getSignedInAgent } from '../../utils';
+import ShieldIcon from '@mui/icons-material/Shield';
 
 function AdminDashboard() {
     const [agent, setAgent] = useState(getSignedInAgent());
+
+    const gridItemStyle = { display: 'flex' };
+    const cardItemStyle = { display: 'flex', justifyContent: 'space-between', flexDirection: 'column', width: '100%' };
 
     if (agent === null) {
         return <Navigate to="/login" />;
@@ -13,32 +17,38 @@ function AdminDashboard() {
         return <Navigate to="/dashboard" />;
     }
     return (
-        <Grid container alignItems="stretch" spacing={2} paddingLeft={1} paddingRight={1} paddingTop={1}>
-            <Grid item xs={4} style={{display: 'flex'}}>
-                <Card style={{display: 'flex', justifyContent: 'space-between', flexDirection: 'column', width: '100%'}}>
+        <Grid container alignItems="stretch" spacing={2} paddingLeft={1} paddingRight={1} paddingTop={1} margin={0}>
+            <Grid item xs={4} style={gridItemStyle}>
+                <Card style={cardItemStyle}>
                     <NewAgentForm />
                 </Card>
             </Grid>
-            <Grid item xs={4} style={{display: 'flex'}}>
-                <Card style={{display: 'flex', justifyContent: 'space-between', flexDirection: 'column', width: '100%'}}>
+            <Grid item xs={4} style={gridItemStyle}>
+                <Card style={cardItemStyle}>
                     <DeleteAgentForm />
                 </Card>
             </Grid>
-            <Grid xs={4} style={{display: 'flex'}}>
-                <Card style={{display: 'flex', justifyContent: 'space-between', flexDirection: 'column', width: '100%'}}>
+            <Grid xs={4} style={gridItemStyle}>
+                <Card style={cardItemStyle}>
                     <UnregisterAgentForm />
                 </Card>
             </Grid>
-            <Grid xs={6}>
-                <Card>
+            <Grid xs={4} style={gridItemStyle}>
+                <Card style={cardItemStyle}>
                     <AgentList endpoint='/api/admin/all_registered_users' title='Registered Agents'
-                    desc='All agents who have registered (ie. have signed into account).' />
+                        desc='All agents who have registered (ie. have signed into account).' />
                 </Card>
             </Grid>
-            <Grid xs={6}>
-                <Card>
+            <Grid xs={4} style={gridItemStyle}>
+                <Card style={cardItemStyle}>
                     <AgentList endpoint='/api/admin/all_nonregistered_users' title='Non-Registered Agents'
-                    desc="All agents who have not yet registered (ie. haven't signed into account)." />
+                        desc="All agents who have not yet registered (ie. haven't signed into account)." />
+                </Card>
+            </Grid>
+            <Grid xs={4} style={gridItemStyle}>
+                <Card style={cardItemStyle}>
+                    <AgentList endpoint='/api/admin/all_deleted_users' title='Deleted Agents'
+                        desc="All agents who have been deleted." />
                 </Card>
             </Grid>
         </Grid>
@@ -55,7 +65,6 @@ function AgentList(props) {
         setErrMsg("");
         axios.get(props.endpoint).then(res => {
             setUsers(res.data);
-            console.log(users);
         }).catch(err => {
             setErrMsg("Failed to load agents. Try again later.");
         }).finally(() => {
@@ -74,14 +83,27 @@ function AgentList(props) {
         {isLoading && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}><CircularProgress /></div>}
         {!isLoading && <div>
             <Button fullWidth onClick={getUsers}>Refresh</Button>
-            <Sheet variant="soft" sx={{height: '170px', mt: 1, overflow: 'auto', borderRadius: 4}}>
-            <List>
-                {users.map((value, index) => (
-                    <ListItem key={index}>
-                        {value.username + " - " + value.firstName + " " + value.lastName}
-                    </ListItem>
-                ))}
-            </List>
+            <Sheet variant="soft" sx={{ height: '170px', mt: 1, overflow: 'auto', borderRadius: 4 }}>
+                <Table stickyHeader sx={{ '& thead th:nth-child(1)': { width: '90px' } }}>
+                    <thead>
+                        <tr>
+                            <th>Is Admin?</th>
+                            <th>Username</th>
+                            <th>Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {users.map((user, i) => (
+                            <tr key={i}>
+                                <td style={{paddingLeft: '30px'}}>
+                                    {user.isAdmin ? <ShieldIcon /> : ""}
+                                </td>
+                                <td>{user.username}</td>
+                                <td>{user.firstName + " " + user.lastName}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>
             </Sheet>
             {errMsg !== "" && <Typography color="danger" fontSize="sm" marginTop={1}>{errMsg}</Typography>}
         </div>
@@ -129,7 +151,7 @@ function UnregisterAgentForm() {
             </FormControl>
             <FormControl>
                 <FormLabel>Password</FormLabel>
-                <Input readonly type="text" placeholder="To be generated" value={password} style={{ color: 'var(--joy-palette-neutral-200)' }}
+                <Input readOnly type="text" placeholder="To be generated" value={password} style={{ color: 'var(--joy-palette-neutral-200)' }}
                     endDecorator={
                         <Button color='neutral' onClick={() => navigator.clipboard.writeText(password)}>Copy</Button>
                     }
@@ -169,7 +191,7 @@ function DeleteAgentForm() {
 
     return <div>
         <Typography level='h6'>Delete Agent</Typography>
-        <Typography color="neutral" fontSize='sm'>Remove an agents account.<br />You can also remove admin accounts.</Typography>
+        <Typography color="neutral" fontSize='sm'>Delete an agent or admins account. This is currently irreversible.</Typography>
         <Divider sx={{ mt: '10px', mb: '10px' }} />
         {isLoading && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}><CircularProgress /></div>}
         {!isLoading && <form onSubmit={e => { e.preventDefault(); deleteUser(username) }}>
@@ -237,7 +259,7 @@ function NewAgentForm() {
                 </FormControl>
                 <FormControl>
                     <FormLabel>Password</FormLabel>
-                    <Input readonly type="text" placeholder="To be generated" value={password} style={{ color: 'var(--joy-palette-neutral-200)' }}
+                    <Input readOnly type="text" placeholder="To be generated" value={password} style={{ color: 'var(--joy-palette-neutral-200)' }}
                         endDecorator={
                             <Button color='neutral' onClick={() => navigator.clipboard.writeText(password)}>Copy</Button>
                         }
