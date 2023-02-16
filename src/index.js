@@ -16,7 +16,7 @@ import AdminDashboard from "./agent/dashboard/admin/AdminDashboard";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home/>,
+    element: <Home />,
   },
   {
     path: "/login",
@@ -28,7 +28,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "chat",
-        element: <Chat/>,
+        element: <Chat />,
       },
       {
         path: "messages",
@@ -50,18 +50,16 @@ const router = createBrowserRouter([
   },
   {
     path: "*", // Default route
-    element: <Home/>,
+    element: <Home />,
   },
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <CssVarsProvider defaultMode='system'>
-      <CssBaseline></CssBaseline>
-      <RouterProvider router={router}/>
-    </CssVarsProvider>
-  </React.StrictMode>
+  <CssVarsProvider defaultMode='system'>
+    <CssBaseline></CssBaseline>
+    <RouterProvider router={router} />
+  </CssVarsProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function
