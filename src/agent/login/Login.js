@@ -198,7 +198,7 @@ function RegisterForm() {
           />
         </FormControl>
         <Typography textColor="neutral" fontSize="sm">Password Requirements:</Typography>
-        {passwordReqs.requirements.map((name) => <Typography color={passwordReqs[name]["met"] ? "neutral:500" : "neutral"} fontSize="sm">- {passwordReqs[name]["text"]}</Typography>)}
+        {passwordReqs.requirements.map((name) => <Typography key={name} color={passwordReqs[name]["met"] ? "neutral:500" : "neutral"} fontSize="sm">- {passwordReqs[name]["text"]}</Typography>)}
 
         {errMsg !== "" && <Typography color="danger" fontSize="sm" marginTop={1}>{errMsg}</Typography>}
         {!passwordReqsMet && <Button disabled sx={{ mt: 1, width: '100%' }}>Register</Button>}
