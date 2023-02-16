@@ -7,7 +7,7 @@ WORKDIR /usr/src/frontend
 # copy src to container
 COPY ./ ./
 # build react site from src
-RUN npm install && npm run build
+RUN npm install --production && npm run build
 
 # pull nginx image
 FROM nginx
