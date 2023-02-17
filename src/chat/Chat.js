@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 import { getSignedInAgent } from '../agent/utils';
 import { deleteChatAuthToken, getChatAuthToken, getChatAuthTokenInfo, setQueueBypassToken } from '../queue/QueueTokenUtils';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 // NOTE: Some boiler plate for knowing if a request is from an agent or user
 // and making required calls for queue.
@@ -34,12 +34,18 @@ function Chat() {
 }
 
 function AgentChat() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [isConnected, setIsConnected] = useState(false);
   const [lastPong, setLastPong] = useState(null);
   const [socket, setSocket] = useState(null);
   // Flag for if the agent is online in the chat or not
   // Ie. so we know to display the chat, or a join chat button
   const [isAgentInChat, setIsAgentInChat] = useState(false);
+
+  if (location.pathname === '/chat') {
+    navigate('/dashboard');
+  }
 
   // Initialize socket
   useEffect(() => {
