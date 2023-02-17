@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 import { useNavigate } from "react-router-dom";
-import { Button, FormControl, FormLabel, Input, Modal, ModalDialog, Typography } from '@mui/joy';
+import { Box, Button, Card, CircularProgress, FormControl, FormLabel, Input, Modal, ModalDialog, Typography } from '@mui/joy';
 import { deleteQueueBypassToken, getQueueBypassToken, setChatAuthToken } from './QueueTokenUtils';
 import { Stack } from '@mui/system';
 import { getSignedInAgent } from '../agent/utils';
@@ -16,6 +16,9 @@ const createSocket = () => {
 function Queue() {
   let navigate = useNavigate();
   const [isConnected, setIsConnected] = useState(false);
+  const [wasDisconnected, setWasDisconnected] = useState(false);
+  const [isDoneQueue, setIsDoneQueue] = useState(false);
+  const [agentsOnline, setAgentsOnline] = useState(null);
   const [lastPong, setLastPong] = useState(null);
   const [socket, setSocket] = useState(null);
 
@@ -52,7 +55,7 @@ function Queue() {
       });
 
       socket.on('disconnect', (msg) => {
-        setIsConnected(false);
+        setWasDisconnected(true);
       });
 
       socket.on('bad_auth', () => {
@@ -63,15 +66,15 @@ function Queue() {
         }
       })
 
-      socket.on('try_again', () => {
-        // TODO: Display try again msg
-      })
-
       socket.on('done', (msg) => {
-        console.log('got done!', msg);
         setChatAuthToken(msg.token);
+        setIsDoneQueue(true);
         navigate('/chat');
       });
+
+      socket.on('agents_online', num => {
+        setAgentsOnline(num);
+      })
 
       socket.on('pong', () => {
         setLastPong(new Date().toISOString());
@@ -95,8 +98,38 @@ function Queue() {
     }
   }
 
+  let message = "Waiting In Queue";
+  if (!isConnected) {
+    message = "Joining Queue";
+  } else if (isDoneQueue) {
+    message = "It's your turn! Joining now.";
+  } else if (wasDisconnected) {
+    message = "Something went wrong. Refresh the page";
+  }
+
+  let agentsOnlineMessage = "";
+  if (agentsOnline === 0) {
+    agentsOnlineMessage = `There are no agents online`;
+  } else if (agentsOnline === 1) {
+    agentsOnlineMessage = `There is ${agentsOnline} agent online`;
+  } else if (agentsOnline > 1) {
+    agentsOnlineMessage = `There are ${agentsOnline} agents online`;
+  }
+
+
+
   return (
     <div>
+      <Box sx={{width: '100%', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+        <Card sx={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+          <Typography level="h2">
+            {message}
+          </Typography>
+        <CircularProgress sx={{mt: 1, mb: 1}} />
+        {isConnected && !isDoneQueue && !wasDisconnected && <Typography>{agentsOnlineMessage}</Typography>}
+        </Card>
+      </Box>
+
       <p>Connected: {'' + isConnected}</p>
       <p>Last pong: {lastPong || '-'}</p>
       <button onClick={sendPing}>Send ping</button>
