@@ -39,6 +39,11 @@ function AgentChat() {
   const [isConnected, setIsConnected] = useState(false);
   const [lastPong, setLastPong] = useState(null);
   const [socket, setSocket] = useState(null);
+  // Users are of the format {userId: str, firstName: str, lastName: str}
+  // Only the userId should be used to communicate with the user
+  const [assignedUsers, setAssignedUsers] = useState([]);
+  // Map of {userId: []} -- we can use this for storing messages from the user
+  const [chats, setChats] = useState({});
   // Flag for if the agent is online in the chat or not
   // Ie. so we know to display the chat, or a join chat button
   const [isAgentInChat, setIsAgentInChat] = useState(false);
@@ -71,6 +76,35 @@ function AgentChat() {
         setIsAgentInChat(true);
       });
 
+      // When the queue assigned a user to the agent
+      // NOTE: They haven't joined the chat yet -- only finished the queue
+      socket.on('assigned_user', (user) => {
+        setAssignedUsers(assignedUsers => [...assignedUsers, user])
+      })
+
+      // When the user joins the chat
+      socket.on('user_joined_chat', (userId) => {
+        // Create the chat between the agent and user
+        setChats(chats => ({
+          ...chats,
+          userId: []
+        }))
+      });
+
+      // When the user leaves the chat
+      socket.on('user_disconnect', (userId) => {
+        // Remove user from assigned users
+        setAssignedUsers(assignedUsers => assignedUsers.filter((user) => {
+          return user.userId !== userId;
+        }))
+        // Remove chat logs if needed
+        if (chats.hasOwnProperty(userId)) {
+          let tmpChats = {...chats};
+          delete tmpChats[userId]
+        }
+      })
+
+
       return (() => {
         socket.disconnect();
       })
@@ -95,6 +129,10 @@ function AgentChat() {
       <p>Last pong: {lastPong || '-'}</p>
       <button onClick={sendPing}>Send ping</button>
       {!isAgentInChat && <button onClick={startAgentChat}>Join chat</button>}
+      <p>Assigned Users:</p>
+      {assignedUsers.map((user, i) => {
+        return (<p key={i}>{"ID: " + user.userId + " -- " + user.firstName + " " + user.lastName}</p>);
+      })}
     </div>
   );
 }
