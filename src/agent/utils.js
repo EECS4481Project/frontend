@@ -2,6 +2,8 @@ import Cookies from 'js-cookie'
 import jwt_decode from "jwt-decode";
 
 /**
+ * Note: this can be spoofed on the front-end. Should only be used for
+ * UI.
  * Returns a JSON of {username: str, firstName: str, lastName: str, isAdmin: boolean}
  * if a user is signed in. Otherwise returns null.
  */
