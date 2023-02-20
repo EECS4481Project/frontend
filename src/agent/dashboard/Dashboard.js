@@ -29,7 +29,7 @@ function Dashboard() {
   }
   return (
     <div>
-      <Stack direction="row" paddingLeft={4} paddingRight={4} paddingTop={1} paddingBottom={1} width='100%' sx={{ backgroundColor: 'background.level1', boxShadow: 'xs' }}>
+      <Stack direction="row" paddingLeft={4} paddingRight={4} paddingTop={1} paddingBottom={1} width='100%' sx={{ backgroundColor: 'background.level1', boxShadow: 'xs', height: '56px' }}>
         <Typography level="h3">Dashboard</Typography>
         <Divider orientation='vertical' sx={{ ml: 3 }} />
         {!agent.isAdmin && <Stack direction="row" justifyContent="center" display="flex" width="100%" sx={{ ml: 3, mr: 3 }}>
@@ -40,7 +40,9 @@ function Dashboard() {
         <Typography sx={{ mt: '7px' /* hacky way to center it */ }}>{agent.username}</Typography>
         <ProfileMenu />
       </Stack>
-      <Outlet />
+      <div style={{height: 'calc(100vh - 56px)', width: '100vw', display: 'flex'}}> { /* Fill rest of page with content */}
+        <Outlet />
+      </div>
     </div>
   );
 }
@@ -177,8 +179,6 @@ function ChangePasswordModal(props) {
 
   return (
     <ModalDialog
-      aria-labelledby="basic-modal-dialog-title"
-      aria-describedby="basic-modal-dialog-description"
       sx={{ maxWidth: 500 }}
     >
       <Typography id="basic-modal-dialog-title" component="h2">
