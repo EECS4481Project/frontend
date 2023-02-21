@@ -1,0 +1,3 @@
+.MuiAutocomplete-listbox {
+    z-index: 999999 !important; /* Required to render autocomplete popup in modal */
+}

@@ -1,30 +1,19 @@
-import axios from 'axios';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import './Home.css';
-
-const SOME_VAR = "Home Page";
+import { Box, Button, Card, Typography } from '@mui/joy';
 
 function Home() {
-  const [valueFromEndpoint, setValueFromEndpoint] = useState("Loading...");
-  axios.get('/api/health_check').then(res => {
-    if (res.status === 200) {
-      setValueFromEndpoint("Successfully reached backend w/ API call!");
-    } else {
-      setValueFromEndpoint("Failed to reach backend w/ API call :(");
-    }
-  })
   return (
-    <div>
-      <h1>{SOME_VAR}</h1>
-      <ul>
-        <li><Link to="/">Home</Link></li>
-        <li><Link to="/dashboard">Agent Dashboard</Link></li>
-        <li><Link to="/chat">Chat</Link></li>
-        <li><Link to="/queue">Queue</Link></li>
-      </ul>
-      <h2>{valueFromEndpoint}</h2>
-    </div>
+    <Box sx={{ height: '100vh', width: '100%' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100% - 50px)', width: '100%', flexDirection: 'column' }}>
+        <Card sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Typography level='h4'>Welcome 👋</Typography>
+          <Typography textAlign='center' sx={{ marginBottom: '5px' }} color='neutral'>You have questions, and we have answers!</Typography>
+          <Button component="a" href='/chat'>Chat With An Agent</Button>
+        </Card>
+      </Box>
+      <Box sx={{height: '50px', width: '100%', display: 'flex', flexDirection: 'row-reverse', alignItems: 'center' }}>
+          <Button color='neutral' component='a' href='/dashboard' size='sm' variant='plain' sx={{marginRight: '10px'}}>Agent Dashboard</Button>
+        </Box>
+    </Box>
   );
 }
 
