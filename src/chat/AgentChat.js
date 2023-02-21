@@ -259,7 +259,7 @@ function TransferToAgentModal(props) {
 
 function AgentJoinChat(props) {
     return <Box sx={{ width: '100%', height: '100%', flexGrow: 1, flexShrink: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
-        <Typography>Not current in chat queue.</Typography>
+        <Typography>Not currently in chat queue.</Typography>
         <Button onClick={props.onClick}>Join Chat</Button>
     </Box>;
 }
