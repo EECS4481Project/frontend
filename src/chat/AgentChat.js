@@ -1,16 +1,20 @@
 // Chat for agents to anonymous users
-import { Badge, Button, Card, Typography } from "@mui/joy";
+import { Autocomplete, Badge, Button, Card, CircularProgress, Modal, ModalDialog, Tooltip, Typography } from "@mui/joy";
 import { Box } from "@mui/system";
 import { useEffect, useReducer, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { createSocket, MessageScreen, ChatScreen } from "./CommonChat";
 import ClearIcon from '@mui/icons-material/Clear';
+import PeopleIcon from '@mui/icons-material/People';
+import "./AgentChat.css";
 
 function AgentChat(props) {
     const [, forceUpdate] = useReducer(x => x + 1, 0);
     const location = useLocation();
     const navigate = useNavigate();
     const [socket, setSocket] = useState(null);
+    const [onlineAgents, setOnlineAgents] = useState([]);
+    const [gotOnlineAgents, setGotOnlineAgents] = useState(false);
     // Users are of the format {userId: str, firstName: str, lastName: str}
     // Only the userId should be used to communicate with the user
     const [assignedUsers, setAssignedUsers] = useState([]);
@@ -58,6 +62,11 @@ function AgentChat(props) {
                 setIsAgentInChat(true);
             });
 
+            socket.on('available_agents', (agents) => {
+                setOnlineAgents(agents);
+                setGotOnlineAgents(true);
+            })
+
             // When the queue assigned a user to the agent
             // NOTE: They haven't joined the chat yet -- only finished the queue
             socket.on('assigned_user', (user) => {
@@ -70,6 +79,7 @@ function AgentChat(props) {
             })
 
             socket.on('transcript', msg => {
+                console.log(msg);
                 setChats(chats => {
                     if (chats.hasOwnProperty(msg.userId)) {
                         chats[msg.userId].push(...msg);
@@ -173,7 +183,7 @@ function AgentChat(props) {
             {disconnected && <MessageScreen message="Something went wrong. Refresh the page" />}
             {isAgentInChat && !disconnected &&
                 <div style={{ display: 'flex', width: '100%', height: '100%', flexDirection: 'row' }}>
-                    <SideBar chattingWithUsers={assignedUsers} setChattingWithUsers={setAssignedUsers} socket={socket} chattingWith={chattingWith} setChattingWith={setChattingWith} unreadMessages={unreadMessages} />
+                    <SideBar chattingWithUsers={assignedUsers} setChattingWithUsers={setAssignedUsers} socket={socket} chattingWith={chattingWith} setChattingWith={setChattingWith} unreadMessages={unreadMessages} gotOnlineAgents={gotOnlineAgents} onlineAgents={onlineAgents} />
                     {chattingWith && <ChatScreen chat={chats[chattingWith]} isAgent={true} sendMessage={sendMessage} />}
                     {!chattingWith && <MessageScreen message="Select a user to start chatting" />}
                 </div>
@@ -183,6 +193,8 @@ function AgentChat(props) {
 }
 
 function SideBar(props) {
+    const [isTransferAgentModalOpen, setIsTransferAgentModalOpen] = useState(false);
+    const [userToTransfer, setUserToTransfer] = useState(null);
     const removeUserFromChattingWith = (userId) => {
         // Send request
         props.socket.emit('end-chat', { userId: userId });
@@ -200,12 +212,49 @@ function SideBar(props) {
                     >
                         {user.firstName + " " + user.lastName}
                     </Button>
-                    <Button color='danger' variant='plain' size='sm' onClick={() => removeUserFromChattingWith(user.userId)}><ClearIcon /></Button>
+                    <Tooltip title="End Chat">
+                        <Button color='danger' variant='plain' size='sm' sx={{ marginLeft: '5px', marginRight: '5px' }} onClick={() => removeUserFromChattingWith(user.userId)}><ClearIcon /></Button>
+                    </Tooltip>
+                    <Tooltip title="Transfer to Agent">
+                        <Button color='warning' variant='plain' size='sm' onClick={() => {
+                            setUserToTransfer(user);
+                            setIsTransferAgentModalOpen(true);
+                        }}><PeopleIcon /></Button>
+                    </Tooltip>
                 </Box>
             }))}
+            <Modal open={isTransferAgentModalOpen} onClose={() => setIsTransferAgentModalOpen(false)}>
+                <TransferToAgentModal setOpen={setIsTransferAgentModalOpen} user={userToTransfer} gotOnlineAgents={props.gotOnlineAgents} onlineAgents={props.onlineAgents} socket={props.socket} />
+            </Modal>
         </Box>
 
     </Card>
+}
+
+function TransferToAgentModal(props) {
+    const [transferTo, setTransferTo] = useState(null);
+
+    const transferUser = (userId, toAgent) => {
+        props.socket.emit('transfer', {
+            userId: userId,
+            toUsername: toAgent
+        })
+        props.setOpen(false);
+    }
+
+    return (<ModalDialog sx={{ maxWidth: 500 }}>
+        <Typography component="h2" sx={{marginBottom: '5px'}}>
+            Transfer {props.user.firstName + ' ' + props.user.lastName} to Another Agent
+        </Typography>
+        {!props.gotOnlineAgents && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}><CircularProgress /></div>}
+        {props.gotOnlineAgents && props.onlineAgents.length === 0 && <Typography>No other agents online</Typography>}
+        {props.gotOnlineAgents && props.onlineAgents.length > 0 &&
+        <div>
+            <Autocomplete options={props.onlineAgents} sx={{marginBottom: '5px'}} value={transferTo} onChange={(e, val) => setTransferTo(val)} />
+            <Button fullWidth disabled={transferTo === null} onClick={() => transferUser(props.user.userId, transferTo)}>Transfer</Button>
+        </div>
+        }
+    </ModalDialog>);
 }
 
 function AgentJoinChat(props) {

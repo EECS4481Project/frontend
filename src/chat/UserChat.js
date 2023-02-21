@@ -70,6 +70,13 @@ function UserChat() {
                 setIsChatEnded(true);
             })
 
+            socket.on('agent-changed', username => {
+                setUserInfo(userInfo => {
+                    userInfo.agentUsername = username;
+                    return userInfo;
+                })
+            })
+
             // Queue functionality
 
             socket.on('enqueue', (msg) => {
