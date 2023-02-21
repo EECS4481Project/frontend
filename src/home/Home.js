@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './Home.css';
 
 const SOME_VAR = "Home Page";
 

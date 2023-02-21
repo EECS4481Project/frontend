@@ -1,5 +1,4 @@
-// Note: This component should handle both agents & users
-import './Chat.css';
+// Note: This component handles both users & agents
 import { useState, useEffect, useReducer } from 'react';
 import io from 'socket.io-client';
 import { getSignedInAgent } from '../agent/utils';
