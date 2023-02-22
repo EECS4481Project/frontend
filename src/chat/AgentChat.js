@@ -79,7 +79,6 @@ function AgentChat(props) {
             })
 
             socket.on('transcript', msg => {
-                console.log(msg);
                 setChats(chats => {
                     if (chats.hasOwnProperty(msg.userId)) {
                         chats[msg.userId].push(...msg);
