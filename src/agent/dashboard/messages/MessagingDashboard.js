@@ -52,6 +52,12 @@ function MessagingDashboard() {
     const tmpUnreadMessages = { ...unreadMessages };
     delete tmpUnreadMessages[chattingWith];
     setUnreadMessages(tmpUnreadMessages);
+    setChattingWithUsers(chattingWithUsers => {
+      if (!chattingWithUsers.includes(chattingWith)) {
+        chattingWithUsers.push(chattingWith);
+      }
+      return chattingWithUsers;
+    })
   }, [chattingWith])
 
   // Handle socket responses
