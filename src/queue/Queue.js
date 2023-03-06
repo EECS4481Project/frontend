@@ -17,9 +17,9 @@ function Queue() {
   let navigate = useNavigate();
   const [isConnected, setIsConnected] = useState(false);
   const [wasDisconnected, setWasDisconnected] = useState(false);
+  const [isRateLimited, setIsRateLimited] = useState(false);
   const [isDoneQueue, setIsDoneQueue] = useState(false);
   const [agentsOnline, setAgentsOnline] = useState(null);
-  const [lastPong, setLastPong] = useState(null);
   const [socket, setSocket] = useState(null);
 
   const queueBypassToken = getQueueBypassToken();
@@ -58,6 +58,10 @@ function Queue() {
         setWasDisconnected(true);
       });
 
+      socket.on('429', () => {
+        setIsRateLimited(true);
+      })
+
       socket.on('bad_auth', () => {
         // Failed to join case
         if (queueBypassToken) {
@@ -76,10 +80,6 @@ function Queue() {
         setAgentsOnline(num);
       })
 
-      socket.on('pong', () => {
-        setLastPong(new Date().toISOString());
-      });
-
       // Join queue immediately if we have the bypass token (no need for name input)
       if (queueBypassToken) {
         socket.emit('join_queue', { token: queueBypassToken });
@@ -91,18 +91,13 @@ function Queue() {
     }
   }, [socket])
 
-  const sendPing = () => {
-    if (socket) {
-      socket.emit('join_queue', { firstName: "John", lastName: "doe" });
-      socket.emit('test');
-    }
-  }
-
   let message = "Waiting In Queue";
   if (!isConnected) {
     message = "Joining Queue";
   } else if (isDoneQueue) {
     message = "It's your turn! Joining now.";
+  } else if (isRateLimited) {
+    message = "You've joined the queue too many times. Try again in 10 minutes."
   } else if (wasDisconnected) {
     message = "Something went wrong. Refresh the page";
   }
@@ -126,13 +121,9 @@ function Queue() {
             {message}
           </Typography>
         <CircularProgress sx={{mt: 1, mb: 1}} />
-        {isConnected && !isDoneQueue && !wasDisconnected && <Typography>{agentsOnlineMessage}</Typography>}
+        {isConnected && !isDoneQueue && !wasDisconnected && !isRateLimited && <Typography>{agentsOnlineMessage}</Typography>}
         </Card>
       </Box>
-
-      <p>Connected: {'' + isConnected}</p>
-      <p>Last pong: {lastPong || '-'}</p>
-      <button onClick={sendPing}>Send ping</button>
       <Modal open={isNameInputOpen} onClose={(e, reason) => {
         if (reason !== "backdropClick") {
           setIsNameInputOpen(false);
