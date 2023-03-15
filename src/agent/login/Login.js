@@ -1,9 +1,9 @@
-import axios from 'axios';
 import Grid from '@mui/joy/Grid';
 import { Button, Card, CircularProgress, FormControl, FormLabel, Input, Tab, TabList, TabPanel, Tabs, Typography } from '@mui/joy';
 import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { checkPasswordRequirements } from '../utils';
+import { authorizedAxios } from '../../auth/RequestInterceptor';
 
 
 function Login() {
@@ -43,7 +43,7 @@ function LoginForm() {
       setIsLoading(false);
       return;
     }
-    axios.post('/api/auth/login', {
+    authorizedAxios.post('/api/auth/login', {
       username, password
     }).then((res) => {
       navigate("/dashboard");
@@ -136,7 +136,7 @@ function RegisterForm() {
       setIsLoading(false);
       return;
     }
-    axios.post('/api/auth/register', {
+    authorizedAxios.post('/api/auth/register', {
       username, password, newPassword
     }).then((res) => {
       navigate("/dashboard");

@@ -1,9 +1,9 @@
 import { Button, Card, CircularProgress, Divider, FormControl, FormLabel, Grid, Input, List, ListItem, Sheet, Table, Typography } from '@mui/joy';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { getSignedInAgent } from '../../utils';
 import ShieldIcon from '@mui/icons-material/Shield';
+import { authorizedAxios } from '../../../auth/RequestInterceptor';
 
 function AdminDashboard() {
     const [agent, setAgent] = useState(getSignedInAgent());
@@ -63,7 +63,7 @@ function AgentList(props) {
     const getUsers = () => {
         setIsLoading(true);
         setErrMsg("");
-        axios.get(props.endpoint).then(res => {
+        authorizedAxios.get(props.endpoint).then(res => {
             setUsers(res.data);
         }).catch(err => {
             setErrMsg("Failed to load agents. Try again later.");
@@ -123,7 +123,7 @@ function UnregisterAgentForm() {
         setErrMsg("");
         setSuccessMsg("");
         setPassword("");
-        axios.post('/api/admin/unregister_user', {
+        authorizedAxios.post('/api/admin/unregister_user', {
             username
         }).then(res => {
             setPassword(res.data.password);
@@ -174,7 +174,7 @@ function DeleteAgentForm() {
         setIsLoading(true);
         setErrMsg("");
         setSuccessMsg("");
-        axios.post('/api/admin/delete_user', {
+        authorizedAxios.post('/api/admin/delete_user', {
             username
         }).then(res => {
             setSuccessMsg("Deleted " + username);
@@ -221,7 +221,7 @@ function NewAgentForm() {
         setSuccessMsg("");
         setErrMsg("");
         setPassword("");
-        axios.post('/api/admin/register_temp_user', {
+        authorizedAxios.post('/api/admin/register_temp_user', {
             username, firstName, lastName
         }).then(res => {
             setSuccessMsg("Registered " + username);

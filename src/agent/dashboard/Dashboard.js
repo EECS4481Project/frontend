@@ -8,7 +8,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import ClickAwayListener from '@mui/base/ClickAwayListener';
 import PopperUnstyled from '@mui/base/PopperUnstyled';
-import axios from 'axios';
+import { authorizedAxios } from '../../auth/RequestInterceptor';
 
 
 
@@ -63,7 +63,7 @@ function ProfileMenu() {
 
   const handleLogout = () => {
     handleClose();
-    axios.post('/api/auth/logout').then(res => {
+    authorizedAxios.post('/api/auth/logout').then(res => {
       navigate('/login');
     }).catch(err => {
       navigate('/login');
@@ -165,7 +165,7 @@ function ChangePasswordModal(props) {
       setIsLoading(false);
       return;
     }
-    axios.post('/api/auth/change_password', {password: newPassword}).then(res => {
+    authorizedAxios.post('/api/auth/change_password', {password: newPassword}).then(res => {
       setIsLoading(false);
       props.setOpen(false);
     }).catch(err => {

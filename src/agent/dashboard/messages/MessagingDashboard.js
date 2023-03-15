@@ -1,11 +1,11 @@
 import { useState, useEffect, useReducer } from 'react';
 import io from 'socket.io-client';
-import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { Autocomplete, Badge, Box, Button, Card, CircularProgress, Divider, Input, Tooltip, Typography } from '@mui/joy';
 import SendIcon from '@mui/icons-material/Send';
 import ClearIcon from '@mui/icons-material/Clear';
 import { getSignedInAgent } from '../../utils';
+import { authorizedAxios } from '../../../auth/RequestInterceptor';
 
 const createSocket = () => {
   return io({
@@ -76,7 +76,7 @@ function MessagingDashboard() {
         setGotAllUsers(false);
         // Handle auth
         if (err.message === 'auth') {
-          axios.get('/api/auth/is_logged_in').then(() => {
+          authorizedAxios.get('/api/auth/is_logged_in').then(() => {
             setSocket(createSocket());
           }).catch(err => {
             // FAILED TO AUTHENTICATE AGENT
@@ -124,7 +124,7 @@ function MessagingDashboard() {
         setChattingWithUsers(usernames);
         for (let i = 0; i < usernames.length; i++) {
           try {
-            const res = await axios.post('/api/help_desk_messaging/chat_page_with_username', {
+            const res = await authorizedAxios.post('/api/help_desk_messaging/chat_page_with_username', {
               username: usernames[i],
               latestTimestamp: Date.now()
             });
