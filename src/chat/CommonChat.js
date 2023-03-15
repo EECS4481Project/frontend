@@ -3,6 +3,7 @@ import { Box, Button, Card, Input, Tooltip, Typography } from "@mui/joy";
 import { useState } from "react";
 import { io } from "socket.io-client";
 import SendIcon from '@mui/icons-material/Send';
+import { getSignedInAgentAuthToken } from "../agent/utils";
 
 export const ChatScreen = (props) => {
   const [text, setText] = useState('');
@@ -67,5 +68,6 @@ export const MessageScreen = (props) => {
 export const createSocket = () => {
   return io({
     path: "/api/start_chat",
+    extraHeaders: {'authorization': getSignedInAgentAuthToken() }
   });
 }

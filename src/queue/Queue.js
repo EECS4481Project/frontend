@@ -9,7 +9,6 @@ import { getSignedInAgent } from '../agent/utils';
 const createSocket = () => {
   return io({
     path: "/api/start_queue",
-    query: { "name": "xyz" },
   });
 }
 

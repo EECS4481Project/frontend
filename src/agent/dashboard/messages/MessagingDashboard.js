@@ -4,12 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { Autocomplete, Badge, Box, Button, Card, CircularProgress, Divider, Input, Tooltip, Typography } from '@mui/joy';
 import SendIcon from '@mui/icons-material/Send';
 import ClearIcon from '@mui/icons-material/Clear';
-import { getSignedInAgent } from '../../utils';
+import { getSignedInAgent, getSignedInAgentAuthToken } from '../../utils';
 import { authorizedAxios } from '../../../auth/RequestInterceptor';
 
 const createSocket = () => {
   return io({
     path: "/api/start_messaging",
+    extraHeaders: {'authorization': getSignedInAgentAuthToken() }
   });
 }
 
