@@ -1,5 +1,5 @@
 import { Navigate, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { checkPasswordRequirements, getSignedInAgent } from '../utils';
+import { checkPasswordRequirements, deleteSignedInAgentAuthToken, getSignedInAgent } from '../utils';
 import { useEffect, useState } from 'react';
 import { Stack } from '@mui/system';
 import { Button, CircularProgress, Divider, FormControl, FormLabel, Input, MenuItem, MenuList, Modal, ModalDialog, Tab, TabList, Tabs, Typography } from '@mui/joy';
@@ -63,9 +63,8 @@ function ProfileMenu() {
 
   const handleLogout = () => {
     handleClose();
-    authorizedAxios.post('/api/auth/logout').then(res => {
-      navigate('/login');
-    }).catch(err => {
+    authorizedAxios.post('/api/auth/logout').catch(err => {}).finally(() => {
+      deleteSignedInAgentAuthToken()
       navigate('/login');
     });
   }
