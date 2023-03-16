@@ -1,65 +1,64 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { CssBaseline, CssVarsProvider } from '@mui/joy';
 import reportWebVitals from './reportWebVitals';
 
-import Home from "./home/Home";
-import Login from "./agent/login/Login";
-import Dashboard from "./agent/dashboard/Dashboard";
-import Chat from "./chat/Chat";
-import Queue from "./queue/Queue";
-import MessagingDashboard from "./agent/dashboard/messages/MessagingDashboard";
-import { CssBaseline, CssVarsProvider, Sheet, useColorScheme } from "@mui/joy";
-import { Box } from "@mui/system";
-import AdminDashboard from "./agent/dashboard/admin/AdminDashboard";
+import Home from './home/Home';
+import Login from './agent/login/Login';
+import Dashboard from './agent/dashboard/Dashboard';
+import Chat from './chat/Chat';
+import Queue from './queue/Queue';
+import MessagingDashboard from './agent/dashboard/messages/MessagingDashboard';
+import AdminDashboard from './agent/dashboard/admin/AdminDashboard';
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <Home />,
   },
   {
-    path: "/login",
-    element: <Login />
+    path: '/login',
+    element: <Login />,
   },
   {
-    path: "/dashboard",
+    path: '/dashboard',
     element: <Dashboard />,
     children: [
       {
-        path: "chat",
+        path: 'chat',
         element: <Chat />,
       },
       {
-        path: "messages",
-        element: <MessagingDashboard />
+        path: 'messages',
+        element: <MessagingDashboard />,
       },
       {
-        path: "admin",
-        element: <AdminDashboard />
+        path: 'admin',
+        element: <AdminDashboard />,
       },
-    ]
+    ],
   },
   {
-    path: "/queue",
-    element: <Queue />
+    path: '/queue',
+    element: <Queue />,
   },
   {
-    path: "/chat",
-    element: <Chat />
+    path: '/chat',
+    element: <Chat />,
   },
   {
-    path: "*", // Default route
+    path: '*', // Default route
     element: <Home />,
   },
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <CssVarsProvider defaultMode='system'>
-    <CssBaseline></CssBaseline>
+  <CssVarsProvider defaultMode="system">
+    <CssBaseline />
     <RouterProvider router={router} />
-  </CssVarsProvider>
+  </CssVarsProvider>,
 );
 
 // If you want to start measuring performance in your app, pass a function
