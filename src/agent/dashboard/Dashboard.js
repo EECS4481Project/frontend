@@ -1,45 +1,93 @@
-import { Navigate, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { checkPasswordRequirements, getSignedInAgent } from '../utils';
+import {
+  Navigate, Outlet, useNavigate, useLocation,
+} from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Stack } from '@mui/system';
-import { Button, CircularProgress, Divider, FormControl, FormLabel, Input, MenuItem, MenuList, Modal, ModalDialog, Tab, TabList, Tabs, Typography } from '@mui/joy';
+import {
+  Button, CircularProgress, Divider, FormControl, FormLabel, Input,
+  MenuItem, MenuList, Modal, ModalDialog, Typography,
+} from '@mui/joy';
 import { styled } from '@mui/joy/styles';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import ClickAwayListener from '@mui/base/ClickAwayListener';
 import PopperUnstyled from '@mui/base/PopperUnstyled';
-import axios from 'axios';
-
-
+import { checkPasswordRequirements, deleteSignedInAgentAuthToken, getSignedInAgent } from '../utils';
+import authorizedAxios from '../../auth/RequestInterceptor';
 
 function Dashboard() {
   // Check if user is signed in
   const navigate = useNavigate();
   const location = useLocation();
   const agent = getSignedInAgent();
-    
+
   if (agent === null) {
     return <Navigate to="/login" />;
-  } else if (location.pathname === '/dashboard' && !agent.isAdmin) {
-    // TODO: This breaks history -- should instead display chat or admin panel depending on user type
+  } if (location.pathname === '/dashboard' && !agent.isAdmin) {
+    // TODO: This breaks history:
+    // should instead display chat or admin panel depending on user type
     return <Navigate to="/dashboard/chat" />;
-  } else if (location.pathname === '/dashboard' && agent.isAdmin) {
-    return <Navigate to="/dashboard/admin" />
+  } if (location.pathname === '/dashboard' && agent.isAdmin) {
+    return <Navigate to="/dashboard/admin" />;
   }
   return (
     <div>
-      <Stack direction="row" paddingLeft={4} paddingRight={4} paddingTop={1} paddingBottom={1} width='100%' sx={{ backgroundColor: 'background.level1', boxShadow: 'xs', height: '56px' }}>
+      <Stack
+        direction="row"
+        paddingLeft={4}
+        paddingRight={4}
+        paddingTop={1}
+        paddingBottom={1}
+        width="100%"
+        sx={{ backgroundColor: 'background.level1', boxShadow: 'xs', height: '56px' }}
+      >
         <Typography level="h3">Dashboard</Typography>
-        <Divider orientation='vertical' sx={{ ml: 3 }} />
-        {!agent.isAdmin && <Stack direction="row" justifyContent="center" display="flex" width="100%" sx={{ ml: 3, mr: 3 }}>
-          <Button color={location.pathname === "/dashboard/chat" ? "primary" : "neutral"} onClick={() => { navigate('/dashboard/chat') }} variant="plain" size="sm" sx={{ mr: 1 }}>Chat</Button>
-          <Button color={location.pathname === "/dashboard/messages" ? "primary" : "neutral"} onClick={() => { navigate('/dashboard/messages') }} size="sm" variant="plain">Messages</Button>
-        </Stack>}
-        {agent.isAdmin && <Stack direction="row" justifyContent="center" display="flex" width="100%" sx={{ ml: 3, mr: 3 }} />}
+        <Divider orientation="vertical" sx={{ ml: 3 }} />
+        {!agent.isAdmin && (
+        <Stack
+          direction="row"
+          justifyContent="center"
+          display="flex"
+          width="100%"
+          sx={{ ml: 3, mr: 3 }}
+        >
+          <Button
+            color={location.pathname === '/dashboard/chat' ? 'primary' : 'neutral'}
+            onClick={() => { navigate('/dashboard/chat'); }}
+            variant="plain"
+            size="sm"
+            sx={{ mr: 1 }}
+          >
+            Chat
+
+          </Button>
+          <Button
+            color={location.pathname === '/dashboard/messages' ? 'primary' : 'neutral'}
+            onClick={() => { navigate('/dashboard/messages'); }}
+            size="sm"
+            variant="plain"
+          >
+            Messages
+
+          </Button>
+        </Stack>
+        )}
+        {agent.isAdmin && (
+        <Stack
+          direction="row"
+          justifyContent="center"
+          display="flex"
+          width="100%"
+          sx={{ ml: 3, mr: 3 }}
+        />
+        )}
         <Typography sx={{ mt: '7px' /* hacky way to center it */ }}>{agent.username}</Typography>
         <ProfileMenu />
       </Stack>
-      <div style={{height: 'calc(100vh - 56px)', width: '100vw', display: 'flex'}}> { /* Fill rest of page with content */}
+      <div style={{ height: 'calc(100vh - 56px)', width: '100vw', display: 'flex' }}>
+        {' '}
+        { /* Fill rest of page with content */}
         <Outlet />
       </div>
     </div>
@@ -63,17 +111,16 @@ function ProfileMenu() {
 
   const handleLogout = () => {
     handleClose();
-    axios.post('/api/auth/logout').then(res => {
-      navigate('/login');
-    }).catch(err => {
+    authorizedAxios.post('/api/auth/logout').catch(() => {}).finally(() => {
+      deleteSignedInAgentAuthToken();
       navigate('/login');
     });
-  }
+  };
 
   const handleChangePassword = () => {
     handleClose();
     setIsChangePasswordOpen(true);
-  }
+  };
 
   const handleListKeyDown = (event) => {
     if (event.key === 'Tab') {
@@ -88,7 +135,6 @@ function ProfileMenu() {
     zIndex: 1000,
   });
 
-
   return (
     <div>
       <Button
@@ -98,7 +144,8 @@ function ProfileMenu() {
         aria-expanded={open ? 'true' : undefined}
         variant="plain"
         color="neutral"
-        onClick={handleClick}>
+        onClick={handleClick}
+      >
         <MoreVertIcon />
       </Button>
       <Popup
@@ -135,21 +182,25 @@ function ProfileMenu() {
   );
 }
 
-function ChangePasswordModal(props) {
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmedNewPassword, setConfirmedNewPassword] = useState("");
+ChangePasswordModal.propTypes = {
+  setOpen: PropTypes.func,
+};
+
+function ChangePasswordModal({ setOpen }) {
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmedNewPassword, setConfirmedNewPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [passwordReqs, setPasswordReqs] = useState(checkPasswordRequirements(newPassword));
-  const [errMsg, setErrMsg] = useState("");
+  const [errMsg, setErrMsg] = useState('');
 
   const [passwordReqsMet, setPasswordReqsMet] = useState(false);
 
   // Check new password validity
   useEffect(() => {
     // Update requirements
-    const tempPasswordReqs = checkPasswordRequirements(newPassword)
+    const tempPasswordReqs = checkPasswordRequirements(newPassword);
     let tempPasswordReqsMet = true;
-    for (var i = 0; i < tempPasswordReqs.requirements.length; i++) {
+    for (let i = 0; i < tempPasswordReqs.requirements.length; i++) {
       if (!tempPasswordReqs[tempPasswordReqs.requirements[i]].met) {
         tempPasswordReqsMet = false;
         break;
@@ -157,7 +208,7 @@ function ChangePasswordModal(props) {
     }
     setPasswordReqs(tempPasswordReqs);
     setPasswordReqsMet(tempPasswordReqsMet);
-  }, [newPassword])
+  }, [newPassword]);
 
   const changePassword = (newPassword, confirmedNewPassword) => {
     if (newPassword !== confirmedNewPassword) {
@@ -165,16 +216,14 @@ function ChangePasswordModal(props) {
       setIsLoading(false);
       return;
     }
-    axios.post('/api/auth/change_password', {password: newPassword}).then(res => {
+    authorizedAxios.post('/api/auth/change_password', { password: newPassword }).then(() => {
       setIsLoading(false);
-      props.setOpen(false);
-    }).catch(err => {
-      setErrMsg("Something went wrong. Try again later.");
+      setOpen(false);
+    }).catch(() => {
+      setErrMsg('Something went wrong. Try again later.');
       setIsLoading(false);
-    })
-  }
-
-
+    });
+  };
 
   return (
     <ModalDialog
@@ -183,8 +232,16 @@ function ChangePasswordModal(props) {
       <Typography id="basic-modal-dialog-title" component="h2">
         Change Password
       </Typography>
-      {isLoading && <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}><CircularProgress /></div>}
-      {!isLoading &&
+      {isLoading && (
+      <div style={{
+        display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%',
+      }}
+      >
+        <CircularProgress />
+      </div>
+      )}
+      {!isLoading
+      && (
       <form
         onSubmit={(event) => {
           event.preventDefault();
@@ -194,23 +251,46 @@ function ChangePasswordModal(props) {
         <Stack>
           <FormControl>
             <FormLabel>New Password</FormLabel>
-            <Input autoFocus required type="password" placeholder="Password" onChange={e => setNewPassword(e.target.value)} />
+            <Input
+              autoFocus
+              required
+              type="password"
+              placeholder="Password"
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
           </FormControl>
           <FormControl>
             <FormLabel>Confirm New Password</FormLabel>
-            <Input required type="password" placeholder="Password" onChange={e => setConfirmedNewPassword(e.target.value)} />
+            <Input
+              required
+              type="password"
+              placeholder="Password"
+              onChange={(e) => setConfirmedNewPassword(e.target.value)}
+            />
           </FormControl>
           <Typography textColor="neutral" fontSize="sm">Password Requirements:</Typography>
-          {passwordReqs.requirements.map((name) => <Typography key={name} color={passwordReqs[name]["met"] ? "neutral:500" : "neutral"} fontSize="sm">- {passwordReqs[name]["text"]}</Typography>)}
-          {errMsg !== "" && <Typography color="danger" fontSize="sm" marginTop={1}>{errMsg}</Typography>}
+          {passwordReqs.requirements.map((name) => (
+            <Typography
+              key={name}
+              color={passwordReqs[name].met ? 'neutral:500' : 'neutral'}
+              fontSize="sm"
+            >
+              -
+              {' '}
+              {passwordReqs[name].text}
+            </Typography>
+          ))}
+          {errMsg !== ''
+          && <Typography color="danger" fontSize="sm" marginTop={1}>{errMsg}</Typography>}
           <FormControl>
             {!passwordReqsMet && <Button disabled sx={{ mt: 1 }}>Change Password</Button>}
-            {passwordReqsMet && <Button type='submit' sx={{ mt: 1 }}>Change Password</Button>}
+            {passwordReqsMet && <Button type="submit" sx={{ mt: 1 }}>Change Password</Button>}
           </FormControl>
         </Stack>
-      </form>}
+      </form>
+      )}
     </ModalDialog>
-  )
+  );
 }
 
 export default Dashboard;
