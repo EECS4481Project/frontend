@@ -63,7 +63,7 @@ export const checkPasswordRequirements = (password) => {
       duplicateCount = 0;
       lastChar = password[i];
     }
-    if (duplicateCount > 1) {
+    if (duplicateCount > 2) {
       isDuplicate = false;
     }
   }
@@ -73,7 +73,7 @@ export const checkPasswordRequirements = (password) => {
     number: { met: numberCount >= 1, text: 'At least 1 number.' },
     symbol: { met: symbolCount >= 1, text: 'At least 1 symbol.' },
     length: { met: password.length >= 8, text: 'At least 8 characters.' },
-    duplicate: { met: isDuplicate , text: 'No more than 2 of the same character in a row' },
+    duplicate: { met: isDuplicate , text: 'No more than 3 of the same character in a row' },
     requirements: ['lowercase', 'uppercase', 'number', 'symbol', 'length', 'duplicate'],
   };
 };
