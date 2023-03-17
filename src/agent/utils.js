@@ -41,6 +41,9 @@ export const checkPasswordRequirements = (password) => {
   let uppercaseCount = 0;
   let numberCount = 0;
   let symbolCount = 0;
+  let lastChar = '';
+  let duplicateCount = 0;
+  let isDuplicate = true;
   for (let i = 0; i < password.length; i++) {
     if (password.charCodeAt(i) >= 'a'.charCodeAt(0)
       && password.charCodeAt(i) <= 'z'.charCodeAt(0)) {
@@ -54,6 +57,15 @@ export const checkPasswordRequirements = (password) => {
     } else {
       symbolCount += 1;
     }
+    if (password[i] === lastChar) {
+      duplicateCount++;
+    } else {
+      duplicateCount = 0;
+      lastChar = password[i];
+    }
+    if (duplicateCount > 1) {
+      isDuplicate = false;
+    }
   }
   return {
     lowercase: { met: lowercaseCount >= 1, text: 'At least 1 lowercase letter.' },
@@ -61,6 +73,7 @@ export const checkPasswordRequirements = (password) => {
     number: { met: numberCount >= 1, text: 'At least 1 number.' },
     symbol: { met: symbolCount >= 1, text: 'At least 1 symbol.' },
     length: { met: password.length >= 8, text: 'At least 8 characters.' },
-    requirements: ['lowercase', 'uppercase', 'number', 'symbol', 'length'],
+    duplicate: { met: isDuplicate , text: 'No more than 2 of the same character in a row' },
+    requirements: ['lowercase', 'uppercase', 'number', 'symbol', 'length', 'duplicate'],
   };
 };
