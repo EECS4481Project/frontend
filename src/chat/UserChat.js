@@ -4,10 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import {
   Box, Card, CircularProgress, Typography,
 } from '@mui/joy';
+import { toast } from 'react-toastify';
 import { createSocket, MessageScreen, ChatScreen } from './CommonChat';
 import {
   deleteChatAuthToken, getChatAuthToken, getChatAuthTokenInfo, setQueueBypassToken,
 } from '../queue/QueueTokenUtils';
+import { TOAST_ERROR_CONFIG } from '../constants';
 
 function UserChat() {
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
@@ -66,6 +68,10 @@ function UserChat() {
           return chat;
         });
         forceUpdate();
+      });
+
+      socket.on('upload-failure', (data) => {
+        toast(`Failed to upload: ${data.fileName}`, TOAST_ERROR_CONFIG);
       });
 
       socket.on('chat-ended', () => {

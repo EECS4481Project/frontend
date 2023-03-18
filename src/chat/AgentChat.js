@@ -9,8 +9,10 @@ import ClearIcon from '@mui/icons-material/Clear';
 import PropTypes from 'prop-types';
 import PeopleIcon from '@mui/icons-material/People';
 import { Socket } from 'socket.io-client';
+import { toast } from 'react-toastify';
 import { createSocket, MessageScreen, ChatScreen } from './CommonChat';
 import './AgentChat.css';
+import { TOAST_ERROR_CONFIG } from '../constants';
 
 AgentChat.propTypes = {
   username: PropTypes.string,
@@ -97,6 +99,10 @@ function AgentChat({ username }) {
           return chats;
         });
         forceUpdate();
+      });
+
+      socket.on('upload-failure', (data) => {
+        toast(`Failed to upload: ${data.fileName}`, TOAST_ERROR_CONFIG);
       });
 
       socket.on('message', (data) => {
