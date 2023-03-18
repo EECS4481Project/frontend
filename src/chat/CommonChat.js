@@ -9,7 +9,7 @@ import SendIcon from '@mui/icons-material/Send';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { toast } from 'react-toastify';
 import { getSignedInAgentAuthToken } from '../agent/utils';
-import { TOAST_ERROR_CONFIG } from '../constants';
+import { TOAST_CONFIG, TOAST_PERSISTENT_CONFIG } from '../constants';
 
 ChatScreen.propTypes = {
   isAgent: PropTypes.bool,
@@ -32,9 +32,10 @@ export function ChatScreen({
   const uploadFile = (file) => {
     if (file.size > 2000000) {
       // File too large
-      toast.error('File is too large (maximum 2MB)', TOAST_ERROR_CONFIG);
+      toast.error('File is too large (maximum 2MB)', TOAST_CONFIG);
     } else {
-      sendFile(file);
+      const toastId = toast.info(`Uploading ${file.name}`, TOAST_PERSISTENT_CONFIG);
+      sendFile(file, toastId);
     }
   };
 

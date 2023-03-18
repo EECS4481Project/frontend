@@ -14,7 +14,7 @@ import AttachFile from '@mui/icons-material/AttachFile';
 import fileDownload from 'js-file-download';
 import { getSignedInAgent, getSignedInAgentAuthToken } from '../../utils';
 import authorizedAxios from '../../../auth/RequestInterceptor';
-import { TOAST_ERROR_CONFIG } from '../../../constants';
+import { TOAST_CONFIG, TOAST_PERSISTENT_CONFIG } from '../../../constants';
 
 const createSocket = () => io({
   path: '/api/start_messaging',
@@ -98,6 +98,9 @@ function MessagingDashboard() {
       });
 
       socket.on('message', (data) => {
+        if (data.toastId) {
+          toast.dismiss(data.toastId);
+        }
         const cleanedData = {
           senderUsername: data.from,
           message: data.message,
@@ -131,7 +134,8 @@ function MessagingDashboard() {
       });
 
       socket.on('upload-failure', (data) => {
-        toast(`Failed to upload: ${data.fileName}`, TOAST_ERROR_CONFIG);
+        toast.dismiss(data.toastId);
+        toast(`Failed to upload: ${data.fileName}`, TOAST_CONFIG);
       });
 
       // Startup handling
@@ -313,10 +317,12 @@ function ChatScreen({
   const uploadFile = (file) => {
     if (file.size > 2000000) {
       // File too large
-      toast.error('File is too large (maximum 2MB)', TOAST_ERROR_CONFIG);
+      toast.error('File is too large (maximum 2MB)', TOAST_CONFIG);
     } else {
-      socket.emit('file-upload', { file, name: file.name, toUsername: chattingWith });
-      // TODO: Notify of upload status
+      const toastId = toast.info(`Uploading ${file.name}`, TOAST_PERSISTENT_CONFIG);
+      socket.emit('file-upload', {
+        file, name: file.name, toUsername: chattingWith, toastId,
+      });
     }
   };
 
@@ -347,7 +353,7 @@ function ChatScreen({
     authorizedAxios.get(href, { responseType: 'blob' }).then((res) => {
       fileDownload(res.data, name, 'image/png');
     }).catch(() => {
-      toast('Failed to download file. Try again later.', TOAST_ERROR_CONFIG);
+      toast('Failed to download file. Try again later.', TOAST_CONFIG);
     });
   };
 

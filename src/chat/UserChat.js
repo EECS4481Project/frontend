@@ -9,7 +9,7 @@ import { createSocket, MessageScreen, ChatScreen } from './CommonChat';
 import {
   deleteChatAuthToken, getChatAuthToken, getChatAuthTokenInfo, setQueueBypassToken,
 } from '../queue/QueueTokenUtils';
-import { TOAST_ERROR_CONFIG } from '../constants';
+import { TOAST_CONFIG } from '../constants';
 
 function UserChat() {
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
@@ -63,6 +63,9 @@ function UserChat() {
       });
 
       socket.on('message', (msg) => {
+        if (msg.toastId) {
+          toast.dismiss(msg.toastId);
+        }
         setChat((chat) => {
           chat.push(msg);
           return chat;
@@ -71,7 +74,8 @@ function UserChat() {
       });
 
       socket.on('upload-failure', (data) => {
-        toast(`Failed to upload: ${data.fileName}`, TOAST_ERROR_CONFIG);
+        toast.dismiss(data.toastId);
+        toast(`Failed to upload: ${data.fileName}`, TOAST_CONFIG);
       });
 
       socket.on('chat-ended', () => {
@@ -130,9 +134,8 @@ function UserChat() {
     });
   };
 
-  const sendAttachment = (file) => {
-    socket.emit('file-upload', { file, name: file.name });
-    // TODO: Notify of loading status
+  const sendAttachment = (file, toastId) => {
+    socket.emit('file-upload', { file, name: file.name, toastId });
   };
 
   return (

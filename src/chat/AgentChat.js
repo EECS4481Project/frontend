@@ -12,7 +12,7 @@ import { Socket } from 'socket.io-client';
 import { toast } from 'react-toastify';
 import { createSocket, MessageScreen, ChatScreen } from './CommonChat';
 import './AgentChat.css';
-import { TOAST_ERROR_CONFIG } from '../constants';
+import { TOAST_CONFIG } from '../constants';
 
 AgentChat.propTypes = {
   username: PropTypes.string,
@@ -102,10 +102,16 @@ function AgentChat({ username }) {
       });
 
       socket.on('upload-failure', (data) => {
-        toast(`Failed to upload: ${data.fileName}`, TOAST_ERROR_CONFIG);
+        toast.dismiss(data.toastId);
+        toast(`Failed to upload: ${data.fileName}`, TOAST_CONFIG);
       });
 
       socket.on('message', (data) => {
+        // Dismiss toast message if needed
+        if (data.toastId) {
+          toast.dismiss(data.toastId);
+        }
+        // Store message
         const toStore = { ...data };
         toStore.correspondentUsername = username;
         setChats((chats) => {
@@ -188,9 +194,10 @@ function AgentChat({ username }) {
     forceUpdate();
   };
 
-  const sendAttachment = (file) => {
-    socket.emit('file-upload', { userId: chattingWith, file, name: file.name });
-    // TODO: Notify of loading status
+  const sendAttachment = (file, toastId) => {
+    socket.emit('file-upload', {
+      userId: chattingWith, file, name: file.name, toastId,
+    });
   };
 
   return (
