@@ -128,8 +128,9 @@ export function ChatScreen({ chat, isAgent, sendMessage, sendFile }) {
           type="file"
           accept="image/*,video/*,.pdf"
           multiple={false}
-          onChange={(ev) => uploadFile(event.target.files[0])}
+          onChange={(ev) => uploadFile(ev.target.files[0])}
           hidden />
+          <Tooltip title="Upload images, videos or PDF files" >
         <Button
           size="sm"
           sx={{ flexGrow: 0, flexShrink: 0, marginLeft: '10px' }}
@@ -140,6 +141,7 @@ export function ChatScreen({ chat, isAgent, sendMessage, sendFile }) {
         >
           <AttachFileIcon />
         </Button>
+        </Tooltip>
         <Button
           size="sm"
           disabled={text === ''}
