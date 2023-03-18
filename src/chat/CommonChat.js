@@ -2,11 +2,14 @@
 import {
   Box, Button, Card, Input, Tooltip, Typography,
 } from '@mui/joy';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { io } from 'socket.io-client';
 import SendIcon from '@mui/icons-material/Send';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { getSignedInAgentAuthToken } from '../agent/utils';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 ChatScreen.propTypes = {
   isAgent: PropTypes.bool,
@@ -17,10 +20,22 @@ ChatScreen.propTypes = {
     correspondentUsername: PropTypes.string,
     isFromUser: PropTypes.bool,
   })),
+  sendFile: PropTypes.func
 };
 
-export function ChatScreen({ chat, isAgent, sendMessage }) {
+export function ChatScreen({ chat, isAgent, sendMessage, sendFile }) {
   const [text, setText] = useState('');
+  const [isFileTooLarge, setIsFileTooLarge] = useState()
+  const fileUploadEl = useRef()
+
+  const uploadFile = (file) => {
+    if (file.size > 2000000) {
+      // File too large
+      toast.error("File is too large (maximum 2MB)")
+    } else {
+      sendFile(file)
+    }
+  }
 
   let correspondentUsername = null;
   return (
@@ -63,12 +78,12 @@ export function ChatScreen({ chat, isAgent, sendMessage }) {
             return (
               <div key={i} style={{ width: '100%' }}>
                 {showUsername
-              && (
-              <Typography color="neutral" textAlign="center" sx={{ width: '100%' }}>
-                {isAgent ? `Agent: ${msg.correspondentUsername}`
-                  : `Chatting with ${msg.correspondentUsername}`}
-              </Typography>
-              )}
+                  && (
+                    <Typography color="neutral" textAlign="center" sx={{ width: '100%' }}>
+                      {isAgent ? `Agent: ${msg.correspondentUsername}`
+                        : `Chatting with ${msg.correspondentUsername}`}
+                    </Typography>
+                  )}
                 <Tooltip title={new Date(msg.timestamp).toLocaleString()}>
                   <Typography sx={{
                     width: 'fit-content',
@@ -108,6 +123,22 @@ export function ChatScreen({ chat, isAgent, sendMessage }) {
             }
           }}
         />
+        <input ref={fileUploadEl}
+          type="file"
+          accept="image/*,video/*,.pdf"
+          multiple={false}
+          onChange={(ev) => uploadFile(event.target.files[0])}
+          hidden />
+        <Button
+          size="sm"
+          sx={{ flexGrow: 0, flexShrink: 0, marginLeft: '10px' }}
+          onClick={() => {
+            // Call the hidden file input on click
+            fileUploadEl.current.click();
+          }}
+        >
+          <AttachFileIcon />
+        </Button>
         <Button
           size="sm"
           disabled={text === ''}
@@ -119,6 +150,18 @@ export function ChatScreen({ chat, isAgent, sendMessage }) {
           <SendIcon />
         </Button>
       </Card>
+        <ToastContainer
+          position="bottom-left"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
     </Box>
   );
 }

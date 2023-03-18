@@ -124,13 +124,17 @@ function UserChat() {
     });
   };
 
+  const sendAttachment = (file) => {
+    // TODO: Send attachment
+  }
+
   return (
     <div style={{ display: 'flex', width: '100%', height: '100vh' }}>
       {isLoading && !disconnected && <Loading />}
       {disconnected && !isChatEnded && <MessageScreen message="Something went wrong. Refresh the page" />}
       {isChatEnded && <MessageScreen message="Agent ended the chat" />}
       {!isLoading && !disconnected
-                && <ChatScreen chat={chat} isAgent={false} sendMessage={sendMessage} />}
+                && <ChatScreen chat={chat} isAgent={false} sendMessage={sendMessage} sendFile={sendAttachment} />}
     </div>
   );
 }

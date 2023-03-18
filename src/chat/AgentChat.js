@@ -182,6 +182,10 @@ function AgentChat({ username }) {
     forceUpdate();
   };
 
+  const sendAttachment = (file) => {
+    // TODO: Send attachment
+  }
+
   return (
     <div style={{ display: 'flex', width: '100%', height: '100%' }}>
       {!isAgentInChat && !disconnected && <AgentJoinChat onClick={startAgentChat} />}
@@ -207,6 +211,7 @@ function AgentChat({ username }) {
                     chat={chats[chattingWith]}
                     isAgent
                     sendMessage={sendMessage}
+                    sendFile={sendAttachment}
                   />
                   )}
                   {!chattingWith && <MessageScreen message="Select a user to start chatting" />}
