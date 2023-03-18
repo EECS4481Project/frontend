@@ -25,7 +25,6 @@ ChatScreen.propTypes = {
 
 export function ChatScreen({ chat, isAgent, sendMessage, sendFile }) {
   const [text, setText] = useState('');
-  const [isFileTooLarge, setIsFileTooLarge] = useState()
   const fileUploadEl = useRef()
 
   const uploadFile = (file) => {
@@ -95,7 +94,7 @@ export function ChatScreen({ chat, isAgent, sendMessage, sendFile }) {
                     wordWrap: 'break-word',
                   }}
                   >
-                    {Object.prototype.hasOwnProperty.call(msg, "file") && <a target="_self" download={msg.fileName} href={`data:${msg.fileType};base64,${msg.file}`}>{msg.fileName}</a>}
+                    {Object.prototype.hasOwnProperty.call(msg, "file") && <a target="_self" download={msg.file.fileName} href={`data:${msg.file.fileType};base64,${msg.file.file}`}>{msg.file.fileName}</a>}
                     {!Object.prototype.hasOwnProperty.call(msg, "file") && msg.message}
                   </Typography>
                 </Tooltip>
