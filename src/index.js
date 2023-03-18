@@ -2,7 +2,9 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { CssBaseline, CssVarsProvider } from '@mui/joy';
+import { ToastContainer } from 'react-toastify';
 import reportWebVitals from './reportWebVitals';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Home from './home/Home';
 import Login from './agent/login/Login';
@@ -58,6 +60,7 @@ root.render(
   <CssVarsProvider defaultMode="system">
     <CssBaseline />
     <RouterProvider router={router} />
+    <ToastContainer />
   </CssVarsProvider>,
 );
 

@@ -7,9 +7,8 @@ import PropTypes from 'prop-types';
 import { io } from 'socket.io-client';
 import SendIcon from '@mui/icons-material/Send';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
+import { toast } from 'react-toastify';
 import { getSignedInAgentAuthToken } from '../agent/utils';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 ChatScreen.propTypes = {
   isAgent: PropTypes.bool,
@@ -20,21 +19,32 @@ ChatScreen.propTypes = {
     correspondentUsername: PropTypes.string,
     isFromUser: PropTypes.bool,
   })),
-  sendFile: PropTypes.func
+  sendFile: PropTypes.func,
 };
 
-export function ChatScreen({ chat, isAgent, sendMessage, sendFile }) {
+export function ChatScreen({
+  chat, isAgent, sendMessage, sendFile,
+}) {
   const [text, setText] = useState('');
-  const fileUploadEl = useRef()
+  const fileUploadEl = useRef();
 
   const uploadFile = (file) => {
     if (file.size > 2000000) {
       // File too large
-      toast.error("File is too large (maximum 2MB)")
+      toast.error('File is too large (maximum 2MB)', {
+        position: 'bottom-left',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'colored',
+      });
     } else {
-      sendFile(file)
+      sendFile(file);
     }
-  }
+  };
 
   let correspondentUsername = null;
   return (
@@ -94,8 +104,8 @@ export function ChatScreen({ chat, isAgent, sendMessage, sendFile }) {
                     wordWrap: 'break-word',
                   }}
                   >
-                    {Object.prototype.hasOwnProperty.call(msg, "file") && <a target="_self" download={msg.file.fileName} href={`data:${msg.file.fileType};base64,${msg.file.file}`}>{msg.file.fileName}</a>}
-                    {!Object.prototype.hasOwnProperty.call(msg, "file") && msg.message}
+                    {Object.prototype.hasOwnProperty.call(msg, 'file') && <a target="_self" download={msg.file.fileName} href={`data:${msg.file.fileType};base64,${msg.file.file}`}>{msg.file.fileName}</a>}
+                    {!Object.prototype.hasOwnProperty.call(msg, 'file') && msg.message}
                   </Typography>
                 </Tooltip>
               </div>
@@ -123,23 +133,25 @@ export function ChatScreen({ chat, isAgent, sendMessage, sendFile }) {
             }
           }}
         />
-        <input ref={fileUploadEl}
+        <input
+          ref={fileUploadEl}
           type="file"
           accept="image/*,video/*,.pdf"
           multiple={false}
           onChange={(ev) => uploadFile(ev.target.files[0])}
-          hidden />
-          <Tooltip title="Upload images, videos or PDF files" >
-        <Button
-          size="sm"
-          sx={{ flexGrow: 0, flexShrink: 0, marginLeft: '10px' }}
-          onClick={() => {
-            // Call the hidden file input on click
-            fileUploadEl.current.click();
-          }}
-        >
-          <AttachFileIcon />
-        </Button>
+          hidden
+        />
+        <Tooltip title="Upload images, videos or PDF files">
+          <Button
+            size="sm"
+            sx={{ flexGrow: 0, flexShrink: 0, marginLeft: '10px' }}
+            onClick={() => {
+              // Call the hidden file input on click
+              fileUploadEl.current.click();
+            }}
+          >
+            <AttachFileIcon />
+          </Button>
         </Tooltip>
         <Button
           size="sm"
@@ -152,18 +164,6 @@ export function ChatScreen({ chat, isAgent, sendMessage, sendFile }) {
           <SendIcon />
         </Button>
       </Card>
-      <ToastContainer
-        position="bottom-left"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
-      />
     </Box>
   );
 }
