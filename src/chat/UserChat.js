@@ -125,7 +125,8 @@ function UserChat() {
   };
 
   const sendAttachment = (file) => {
-    // TODO: Send attachment
+    socket.emit('file-upload', {file, name: file.name, type: file.type})
+    // TODO: Notify of loading status
   }
 
   return (

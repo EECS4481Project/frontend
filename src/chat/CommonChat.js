@@ -95,7 +95,8 @@ export function ChatScreen({ chat, isAgent, sendMessage, sendFile }) {
                     wordWrap: 'break-word',
                   }}
                   >
-                    {msg.message}
+                    {Object.prototype.hasOwnProperty.call(msg, "file") && <a target="_self" download={msg.fileName} href={`data:${msg.fileType};base64,${msg.file}`}>{msg.fileName}</a>}
+                    {!Object.prototype.hasOwnProperty.call(msg, "file") && msg.message}
                   </Typography>
                 </Tooltip>
               </div>
@@ -150,18 +151,18 @@ export function ChatScreen({ chat, isAgent, sendMessage, sendFile }) {
           <SendIcon />
         </Button>
       </Card>
-        <ToastContainer
-          position="bottom-left"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="colored"
-        />
+      <ToastContainer
+        position="bottom-left"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </Box>
   );
 }

@@ -183,7 +183,8 @@ function AgentChat({ username }) {
   };
 
   const sendAttachment = (file) => {
-    // TODO: Send attachment
+    socket.emit('file-upload', {userId: chattingWith, file, name: file.name, type: file.type})
+    // TODO: Notify of loading status
   }
 
   return (
