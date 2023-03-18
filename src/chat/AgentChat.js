@@ -183,9 +183,9 @@ function AgentChat({ username }) {
   };
 
   const sendAttachment = (file) => {
-    socket.emit('file-upload', {userId: chattingWith, file, name: file.name})
+    socket.emit('file-upload', { userId: chattingWith, file, name: file.name });
     // TODO: Notify of loading status
-  }
+  };
 
   return (
     <div style={{ display: 'flex', width: '100%', height: '100%' }}>

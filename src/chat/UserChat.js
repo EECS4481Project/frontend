@@ -125,9 +125,9 @@ function UserChat() {
   };
 
   const sendAttachment = (file) => {
-    socket.emit('file-upload', {file, name: file.name})
+    socket.emit('file-upload', { file, name: file.name });
     // TODO: Notify of loading status
-  }
+  };
 
   return (
     <div style={{ display: 'flex', width: '100%', height: '100vh' }}>
@@ -135,7 +135,14 @@ function UserChat() {
       {disconnected && !isChatEnded && <MessageScreen message="Something went wrong. Refresh the page" />}
       {isChatEnded && <MessageScreen message="Agent ended the chat" />}
       {!isLoading && !disconnected
-                && <ChatScreen chat={chat} isAgent={false} sendMessage={sendMessage} sendFile={sendAttachment} />}
+                && (
+                <ChatScreen
+                  chat={chat}
+                  isAgent={false}
+                  sendMessage={sendMessage}
+                  sendFile={sendAttachment}
+                />
+                )}
     </div>
   );
 }
