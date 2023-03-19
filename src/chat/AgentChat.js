@@ -73,7 +73,7 @@ function AgentChat({ username }) {
       });
 
       socket.on('available_agents', (agents) => {
-        setOnlineAgents(agents);
+        setOnlineAgents(agents.filter((agentUsername) => agentUsername !== username));
         setGotOnlineAgents(true);
       });
 
