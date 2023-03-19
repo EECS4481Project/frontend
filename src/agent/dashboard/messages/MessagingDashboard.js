@@ -1,4 +1,6 @@
-import { useState, useEffect, useReducer } from 'react';
+import {
+  useState, useEffect, useReducer, useRef,
+} from 'react';
 import io, { Socket } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -7,8 +9,12 @@ import {
 } from '@mui/joy';
 import SendIcon from '@mui/icons-material/Send';
 import ClearIcon from '@mui/icons-material/Clear';
+import { toast } from 'react-toastify';
+import AttachFile from '@mui/icons-material/AttachFile';
+import fileDownload from 'js-file-download';
 import { getSignedInAgent, getSignedInAgentAuthToken } from '../../utils';
 import authorizedAxios from '../../../auth/RequestInterceptor';
+import { TOAST_CONFIG, TOAST_PERSISTENT_CONFIG } from '../../../constants';
 
 const createSocket = () => io({
   path: '/api/start_messaging',
@@ -92,11 +98,19 @@ function MessagingDashboard() {
       });
 
       socket.on('message', (data) => {
+        if (data.toastId) {
+          toast.dismiss(data.toastId);
+        }
         const cleanedData = {
           senderUsername: data.from,
           message: data.message,
           timestamp: data.timestamp,
+          fileId: data.fileId,
         };
+        // Handle file upload case (socket alerts client who sent file of upload)
+        if (data.isSelfMessageTo) {
+          data.from = data.isSelfMessageTo;
+        }
         setChats((chats) => {
           if (Object.prototype.hasOwnProperty.call(chats, data.from)) {
             chats[data.from].push(cleanedData);
@@ -117,6 +131,11 @@ function MessagingDashboard() {
         }
         // Force update, as we're deeply modifying the object
         forceUpdate();
+      });
+
+      socket.on('upload-failure', (data) => {
+        toast.dismiss(data.toastId);
+        toast(`Failed to upload: ${data.fileName}`, TOAST_CONFIG);
       });
 
       // Startup handling
@@ -293,6 +312,19 @@ function ChatScreen({
 }) {
   const [text, setText] = useState('');
   const [userInfo] = useState(getSignedInAgent());
+  const fileUploadEl = useRef();
+
+  const uploadFile = (file) => {
+    if (file.size > 2000000) {
+      // File too large
+      toast.error('File is too large (maximum 2MB)', TOAST_CONFIG);
+    } else {
+      const toastId = toast.info(`Uploading ${file.name}`, TOAST_PERSISTENT_CONFIG);
+      socket.emit('file-upload', {
+        file, name: file.name, toUsername: chattingWith, toastId,
+      });
+    }
+  };
 
   const sendMessage = (message) => {
     socket.emit('message', {
@@ -316,6 +348,14 @@ function ChatScreen({
   };
 
   // TODO: We should handle paging rather than returning a max # of messages
+
+  const downloadFile = (href, name) => {
+    authorizedAxios.get(href, { responseType: 'blob' }).then((res) => {
+      fileDownload(res.data, name, 'image/png');
+    }).catch(() => {
+      toast('Failed to download file. Try again later.', TOAST_CONFIG);
+    });
+  };
 
   return (
     <Box sx={{
@@ -354,7 +394,19 @@ function ChatScreen({
                   wordWrap: 'break-word',
                 }}
                 >
-                  {msg.message}
+                  {msg.fileId && (
+                  // eslint-disable-next-line jsx-a11y/anchor-is-valid
+                  <a
+                    href=""
+                    onClick={(e) => {
+                      e.preventDefault();
+                      downloadFile(`/api/help_desk_messaging/agent-download/${msg.fileId}`, msg.message);
+                    }}
+                  >
+                    {`Download ${msg.message}`}
+                  </a>
+                  )}
+                  {!msg.fileId && msg.message}
                 </Typography>
               </Tooltip>
             </div>
@@ -375,6 +427,26 @@ function ChatScreen({
             if (event.key === 'Enter' && text !== '') sendMessage(text);
           }}
         />
+        <input
+          ref={fileUploadEl}
+          type="file"
+          accept="image/*,video/*,.pdf"
+          multiple={false}
+          onChange={(ev) => uploadFile(ev.target.files[0])}
+          hidden
+        />
+        <Tooltip title="Upload images, videos or PDF files">
+          <Button
+            size="sm"
+            sx={{ flexGrow: 0, flexShrink: 0, marginLeft: '10px' }}
+            onClick={() => {
+              // Call the hidden file input on click
+              fileUploadEl.current.click();
+            }}
+          >
+            <AttachFile />
+          </Button>
+        </Tooltip>
         <Button
           size="sm"
           disabled={text === ''}

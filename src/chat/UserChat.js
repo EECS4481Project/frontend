@@ -4,10 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import {
   Box, Card, CircularProgress, Typography,
 } from '@mui/joy';
+import { toast } from 'react-toastify';
 import { createSocket, MessageScreen, ChatScreen } from './CommonChat';
 import {
   deleteChatAuthToken, getChatAuthToken, getChatAuthTokenInfo, setQueueBypassToken,
 } from '../queue/QueueTokenUtils';
+import { TOAST_CONFIG } from '../constants';
 
 function UserChat() {
   const [, forceUpdate] = useReducer((x) => x + 1, 0);
@@ -61,11 +63,19 @@ function UserChat() {
       });
 
       socket.on('message', (msg) => {
+        if (msg.toastId) {
+          toast.dismiss(msg.toastId);
+        }
         setChat((chat) => {
           chat.push(msg);
           return chat;
         });
         forceUpdate();
+      });
+
+      socket.on('upload-failure', (data) => {
+        toast.dismiss(data.toastId);
+        toast(`Failed to upload: ${data.fileName}`, TOAST_CONFIG);
       });
 
       socket.on('chat-ended', () => {
@@ -124,13 +134,24 @@ function UserChat() {
     });
   };
 
+  const sendAttachment = (file, toastId) => {
+    socket.emit('file-upload', { file, name: file.name, toastId });
+  };
+
   return (
     <div style={{ display: 'flex', width: '100%', height: '100vh' }}>
       {isLoading && !disconnected && <Loading />}
       {disconnected && !isChatEnded && <MessageScreen message="Something went wrong. Refresh the page" />}
       {isChatEnded && <MessageScreen message="Agent ended the chat" />}
       {!isLoading && !disconnected
-                && <ChatScreen chat={chat} isAgent={false} sendMessage={sendMessage} />}
+                && (
+                <ChatScreen
+                  chat={chat}
+                  isAgent={false}
+                  sendMessage={sendMessage}
+                  sendFile={sendAttachment}
+                />
+                )}
     </div>
   );
 }

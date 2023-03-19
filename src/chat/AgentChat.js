@@ -9,8 +9,10 @@ import ClearIcon from '@mui/icons-material/Clear';
 import PropTypes from 'prop-types';
 import PeopleIcon from '@mui/icons-material/People';
 import { Socket } from 'socket.io-client';
+import { toast } from 'react-toastify';
 import { createSocket, MessageScreen, ChatScreen } from './CommonChat';
 import './AgentChat.css';
+import { TOAST_CONFIG } from '../constants';
 
 AgentChat.propTypes = {
   username: PropTypes.string,
@@ -99,7 +101,17 @@ function AgentChat({ username }) {
         forceUpdate();
       });
 
+      socket.on('upload-failure', (data) => {
+        toast.dismiss(data.toastId);
+        toast(`Failed to upload: ${data.fileName}`, TOAST_CONFIG);
+      });
+
       socket.on('message', (data) => {
+        // Dismiss toast message if needed
+        if (data.toastId) {
+          toast.dismiss(data.toastId);
+        }
+        // Store message
         const toStore = { ...data };
         toStore.correspondentUsername = username;
         setChats((chats) => {
@@ -182,6 +194,12 @@ function AgentChat({ username }) {
     forceUpdate();
   };
 
+  const sendAttachment = (file, toastId) => {
+    socket.emit('file-upload', {
+      userId: chattingWith, file, name: file.name, toastId,
+    });
+  };
+
   return (
     <div style={{ display: 'flex', width: '100%', height: '100%' }}>
       {!isAgentInChat && !disconnected && <AgentJoinChat onClick={startAgentChat} />}
@@ -207,6 +225,7 @@ function AgentChat({ username }) {
                     chat={chats[chattingWith]}
                     isAgent
                     sendMessage={sendMessage}
+                    sendFile={sendAttachment}
                   />
                   )}
                   {!chattingWith && <MessageScreen message="Select a user to start chatting" />}
