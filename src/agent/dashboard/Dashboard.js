@@ -268,7 +268,6 @@ function ChangePasswordModal({ setOpen }) {
           <FormControl>
             <FormLabel>New Password</FormLabel>
             <Input
-              autoFocus
               required
               type="password"
               placeholder="Password"
