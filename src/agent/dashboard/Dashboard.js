@@ -188,6 +188,7 @@ ChangePasswordModal.propTypes = {
 
 function ChangePasswordModal({ setOpen }) {
   const [newPassword, setNewPassword] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
   const [confirmedNewPassword, setConfirmedNewPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [passwordReqs, setPasswordReqs] = useState(checkPasswordRequirements(newPassword));
@@ -210,17 +211,22 @@ function ChangePasswordModal({ setOpen }) {
     setPasswordReqsMet(tempPasswordReqsMet);
   }, [newPassword]);
 
-  const changePassword = (newPassword, confirmedNewPassword) => {
+  const changePassword = (currentPassword, newPassword, confirmedNewPassword) => {
     if (newPassword !== confirmedNewPassword) {
       setErrMsg("New passwords don't match.");
       setIsLoading(false);
       return;
     }
-    authorizedAxios.post('/api/auth/change_password', { password: newPassword }).then(() => {
+    setIsLoading(true);
+    authorizedAxios.post('/api/auth/change_password', { password: newPassword, currentPassword }).then(() => {
       setIsLoading(false);
       setOpen(false);
-    }).catch(() => {
-      setErrMsg('Something went wrong. Try again later.');
+    }).catch((err) => {
+      if (err.response.status === 403) {
+        setErrMsg('Current password is incorrect.');
+      } else {
+        setErrMsg('Something went wrong. Try again later.');
+      }
       setIsLoading(false);
     });
   };
@@ -245,10 +251,20 @@ function ChangePasswordModal({ setOpen }) {
       <form
         onSubmit={(event) => {
           event.preventDefault();
-          changePassword(newPassword, confirmedNewPassword);
+          changePassword(currentPassword, newPassword, confirmedNewPassword);
         }}
       >
         <Stack>
+          <FormControl>
+            <FormLabel>Current Password</FormLabel>
+            <Input
+              autoFocus
+              required
+              type="password"
+              placeholder="Current Password"
+              onChange={(e) => setCurrentPassword(e.target.value)}
+            />
+          </FormControl>
           <FormControl>
             <FormLabel>New Password</FormLabel>
             <Input
