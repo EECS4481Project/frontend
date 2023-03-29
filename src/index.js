@@ -1,18 +1,40 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import React from 'react';
+import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
-import { CssBaseline, CssVarsProvider } from '@mui/joy';
+import {
+  CircularProgress, CssBaseline, CssVarsProvider, Box, Typography,
+} from '@mui/joy';
 import { ToastContainer } from 'react-toastify';
 import reportWebVitals from './reportWebVitals';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Home from './home/Home';
-import Login from './agent/login/Login';
-import Dashboard from './agent/dashboard/Dashboard';
 import Chat from './chat/Chat';
 import Queue from './queue/Queue';
-import MessagingDashboard from './agent/dashboard/messages/MessagingDashboard';
-import AdminDashboard from './agent/dashboard/admin/AdminDashboard';
+
+// Lazy load admin/agent related routes
+const Login = React.lazy(() => import('./agent/login/Login'));
+const Dashboard = React.lazy(() => import('./agent/dashboard/Dashboard'));
+const AdminDashboard = React.lazy(() => import('./agent/dashboard/admin/AdminDashboard'));
+const MessagingDashboard = React.lazy(() => import('./agent/dashboard/messages/MessagingDashboard'));
+
+const LOADING = (
+  <CssVarsProvider defaultMode="system">
+    <CssBaseline />
+    <Box sx={{
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+    >
+      <CircularProgress />
+      <Typography level="h3">Loading...</Typography>
+    </Box>
+  </CssVarsProvider>
+);
 
 const router = createBrowserRouter([
   {
@@ -21,11 +43,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/login',
-    element: <Login />,
+    element: <Suspense fallback={LOADING}><Login /></Suspense>,
   },
   {
     path: '/dashboard',
-    element: <Dashboard />,
+    element: <Suspense fallback={LOADING}><Dashboard /></Suspense>,
     children: [
       {
         path: 'chat',
@@ -33,11 +55,11 @@ const router = createBrowserRouter([
       },
       {
         path: 'messages',
-        element: <MessagingDashboard />,
+        element: <Suspense fallback={LOADING}><MessagingDashboard /></Suspense>,
       },
       {
         path: 'admin',
-        element: <AdminDashboard />,
+        element: <Suspense fallback={LOADING}><AdminDashboard /></Suspense>,
       },
     ],
   },
