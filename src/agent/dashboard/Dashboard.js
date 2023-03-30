@@ -23,15 +23,13 @@ function Dashboard() {
   const agent = getSignedInAgent();
 
   // On page load
-  useEffect(() => {
-    if (agent === null) {
-      navigate('/login', { replace: true });
-    } if (location.pathname === '/dashboard' && !agent.isAdmin) {
-      navigate('/dashboard/chat', { replace: true });
-    } if (location.pathname === '/dashboard' && agent.isAdmin) {
-      navigate('/dashboard/admin', { replace: true });
-    }
-  }, []);
+  if (agent === null) {
+    return <Navigate to="/login" replace />;
+  } if (location.pathname === '/dashboard' && !agent.isAdmin) {
+    return <Navigate to="/dashboard/chat" replace />;
+  } if (location.pathname === '/dashboard' && agent.isAdmin) {
+    return <Navigate to="/dashboard/admin" replace />;
+  }
 
   return (
     <div>
