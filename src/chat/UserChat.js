@@ -94,12 +94,12 @@ function UserChat() {
       socket.on('enqueue', (msg) => {
         // Push token to localStorage & redirect
         setQueueBypassToken(msg.token);
-        navigate('/queue');
+        navigate('/queue', { replace: true });
       });
 
       socket.on('auth_failed', () => {
         // Redirect to queue
-        navigate('/queue');
+        navigate('/queue', { replace: true });
       });
 
       // Start live chat once socket is setup
@@ -109,7 +109,7 @@ function UserChat() {
         setUserInfo(getChatAuthTokenInfo());
         deleteChatAuthToken();
       } else {
-        navigate('/queue');
+        navigate('/queue', { replace: true });
       }
 
       return (() => {

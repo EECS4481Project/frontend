@@ -22,15 +22,17 @@ function Dashboard() {
   const location = useLocation();
   const agent = getSignedInAgent();
 
-  if (agent === null) {
-    return <Navigate to="/login" />;
-  } if (location.pathname === '/dashboard' && !agent.isAdmin) {
-    // TODO: This breaks history:
-    // should instead display chat or admin panel depending on user type
-    return <Navigate to="/dashboard/chat" />;
-  } if (location.pathname === '/dashboard' && agent.isAdmin) {
-    return <Navigate to="/dashboard/admin" />;
-  }
+  // On page load
+  useEffect(() => {
+    if (agent === null) {
+      navigate('/login', { replace: true });
+    } if (location.pathname === '/dashboard' && !agent.isAdmin) {
+      navigate('/dashboard/chat', { replace: true });
+    } if (location.pathname === '/dashboard' && agent.isAdmin) {
+      navigate('/dashboard/admin', { replace: true });
+    }
+  }, []);
+
   return (
     <div>
       <Stack
@@ -113,7 +115,7 @@ function ProfileMenu() {
     handleClose();
     authorizedAxios.post('/api/auth/logout').catch(() => {}).finally(() => {
       deleteSignedInAgentAuthToken();
-      navigate('/login');
+      navigate('/login', { replace: true });
     });
   };
 

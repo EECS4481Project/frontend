@@ -50,7 +50,7 @@ function AgentChat({ username }) {
   const [disconnected, setDisconnected] = useState(false);
 
   if (location.pathname === '/chat') {
-    navigate('/dashboard');
+    navigate('/dashboard', { replace: true });
   }
 
   // Initialize socket

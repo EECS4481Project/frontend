@@ -31,7 +31,7 @@ function Queue() {
 
   // Redirect to dashboard if an agent
   if (getSignedInAgent()) {
-    navigate('/dashboard');
+    navigate('/dashboard', { replace: true });
   }
 
   // Initialize socket
@@ -74,7 +74,7 @@ function Queue() {
       socket.on('done', (msg) => {
         setChatAuthToken(msg.token);
         setIsDoneQueue(true);
-        navigate('/chat');
+        navigate('/chat', { replace: true });
       });
 
       socket.on('agents_online', (num) => {
