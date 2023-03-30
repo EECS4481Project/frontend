@@ -58,7 +58,7 @@ function LoginForm() {
     authorizedAxios.post('/api/auth/login', {
       username, password,
     }).then(() => {
-      navigate('/dashboard');
+      navigate('/dashboard', { replace: true });
     }).catch((err) => {
       if (err.response.status === 400) {
         setErrMsg('Invalid Credentials');
@@ -161,7 +161,7 @@ function RegisterForm() {
     authorizedAxios.post('/api/auth/register', {
       username, password, newPassword,
     }).then(() => {
-      navigate('/dashboard');
+      navigate('/dashboard', { replace: true });
     }).catch((err) => {
       if (err.response.status === 400) {
         setErrMsg('Invalid Credentials');

@@ -88,7 +88,7 @@ function MessagingDashboard() {
             setSocket(createSocket());
           }).catch(() => {
             // FAILED TO AUTHENTICATE AGENT
-            navigate('/login');
+            navigate('/login', { replace: true });
           });
         }
       });

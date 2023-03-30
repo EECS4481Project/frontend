@@ -21,9 +21,9 @@ function AdminDashboard() {
   };
 
   if (agent === null) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" replace />;
   } if (!agent.isAdmin) {
-    return <Navigate to="/dashboard" />;
+    return <Navigate to="/dashboard" replace />;
   }
   return (
     <Grid
