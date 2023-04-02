@@ -9,7 +9,7 @@ import SendIcon from '@mui/icons-material/Send';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { toast } from 'react-toastify';
 import { getSignedInAgentAuthToken } from '../agent/utils';
-import { TOAST_CONFIG, TOAST_PERSISTENT_CONFIG } from '../constants';
+import { TOAST_CONFIG, TOAST_PERSISTENT_CONFIG, MESSAGING_INPUT_MAX_LENGTH_SLOT_PROP } from '../constants';
 
 ChatScreen.propTypes = {
   isAgent: PropTypes.bool,
@@ -48,6 +48,7 @@ export function ChatScreen({
       height: '100%',
       display: 'flex',
       flexDirection: 'column',
+      minWidth: '0',
     }}
     >
       <Box sx={{ flexGrow: 100000000, flexShrink: 1 }} />
@@ -81,7 +82,7 @@ export function ChatScreen({
               <div key={i} style={{ width: '100%' }}>
                 {showUsername
                   && (
-                    <Typography color="neutral" textAlign="center" sx={{ width: '100%' }}>
+                    <Typography color="neutral" textAlign="center" sx={{ width: '100%', textOverflow: 'ellipsis', overflow: 'hidden' }}>
                       {isAgent ? `Agent: ${msg.correspondentUsername}`
                         : `Chatting with ${msg.correspondentUsername}`}
                     </Typography>
@@ -95,6 +96,7 @@ export function ChatScreen({
                     padding: '4px 8px 4px 8px',
                     margin: '2px 10px 2px 10px',
                     wordWrap: 'break-word',
+                    lineBreak: 'anywhere',
                   }}
                   >
                     {Object.prototype.hasOwnProperty.call(msg, 'file') && <a target="_self" download={msg.file.fileName} href={`data:${msg.file.fileType};base64,${msg.file.file}`}>{msg.file.fileName}</a>}
@@ -115,6 +117,7 @@ export function ChatScreen({
       }}
       >
         <Input
+          slotProps={MESSAGING_INPUT_MAX_LENGTH_SLOT_PROP}
           size="sm"
           sx={{ flexGrow: 1, flexShrink: 1 }}
           value={text}

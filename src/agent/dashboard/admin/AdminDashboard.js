@@ -8,6 +8,7 @@ import ShieldIcon from '@mui/icons-material/Shield';
 import PropTypes from 'prop-types';
 import { getSignedInAgent } from '../../utils';
 import authorizedAxios from '../../../auth/RequestInterceptor';
+import { COMMON_INPUT_MAX_LENGTH_SLOT_PROP } from '../../../constants';
 
 function AdminDashboard() {
   const agent = getSignedInAgent();
@@ -147,8 +148,8 @@ function AgentList({ endpoint, title, desc }) {
                   <td style={{ paddingLeft: '30px' }}>
                     {user.isAdmin ? <ShieldIcon /> : ''}
                   </td>
-                  <td>{user.username}</td>
-                  <td>{`${user.firstName} ${user.lastName}`}</td>
+                  <td style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{user.username}</td>
+                  <td style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{`${user.firstName} ${user.lastName}`}</td>
                 </tr>
               ))}
             </tbody>
@@ -217,6 +218,7 @@ function UnregisterAgentForm() {
         <FormControl>
           <FormLabel>Username</FormLabel>
           <Input
+            slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
             required
             type="username"
             placeholder="Username"
@@ -227,6 +229,7 @@ function UnregisterAgentForm() {
         <FormControl>
           <FormLabel>Password</FormLabel>
           <Input
+            slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
             readOnly
             type="text"
             placeholder="To be generated"
@@ -245,7 +248,7 @@ function UnregisterAgentForm() {
         {errMsg !== ''
         && <Typography color="danger" fontSize="sm" marginTop={1}>{errMsg}</Typography>}
         {successMsg !== ''
-        && <Typography color="success" fontSize="sm" marginTop={1}>{successMsg}</Typography>}
+        && <Typography color="success" fontSize="sm" marginTop={1} sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{successMsg}</Typography>}
         <Button type="submit" sx={{ mt: 1, width: '100%' }}>Unregister Agent</Button>
       </form>
       )}
@@ -298,6 +301,7 @@ function DeleteAgentForm() {
         <FormControl>
           <FormLabel>Username</FormLabel>
           <Input
+            slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
             required
             type="username"
             placeholder="Username"
@@ -319,6 +323,7 @@ function DeleteAgentForm() {
           color="success"
           fontSize="sm"
           marginTop={1}
+          sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}
         >
           {successMsg}
         </Typography>
@@ -383,6 +388,7 @@ function NewAgentForm() {
         <FormControl>
           <FormLabel>Username</FormLabel>
           <Input
+            slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
             required
             type="username"
             placeholder="Username"
@@ -393,6 +399,7 @@ function NewAgentForm() {
         <FormControl>
           <FormLabel>First Name</FormLabel>
           <Input
+            slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
             required
             type="text"
             placeholder="John"
@@ -403,6 +410,7 @@ function NewAgentForm() {
         <FormControl>
           <FormLabel>Last Name</FormLabel>
           <Input
+            slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
             required
             type="text"
             placeholder="Doe"
@@ -413,6 +421,7 @@ function NewAgentForm() {
         <FormControl>
           <FormLabel>Password</FormLabel>
           <Input
+            slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
             readOnly
             type="text"
             placeholder="To be generated"
@@ -431,7 +440,7 @@ function NewAgentForm() {
         {errMsg !== ''
         && <Typography color="danger" fontSize="sm" marginTop={1}>{errMsg}</Typography>}
         {successMsg !== ''
-        && <Typography color="success" fontSize="sm" marginTop={1}>{successMsg}</Typography>}
+        && <Typography color="success" fontSize="sm" marginTop={1} sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{successMsg}</Typography>}
         <Button type="submit" sx={{ mt: 1, width: '100%' }}>Register</Button>
       </form>
       )}
