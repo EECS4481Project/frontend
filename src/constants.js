@@ -17,6 +17,6 @@ export const TOAST_PERSISTENT_CONFIG = {
   theme: 'colored',
 };
 
-export const NORMAL_INPUT = 256;
+export const COMMON_INPUT_MAX_LENGTH_SLOT_PROP = { input: { maxLength: 256 } };
 
-export const MESSAGING_INPUT = 1024;
+export const MESSAGING_INPUT_MAX_LENGTH_SLOT_PROP = { input: { maxLength: 1024 } };

@@ -9,6 +9,7 @@ import {
 import { Stack } from '@mui/system';
 import { deleteQueueBypassToken, getQueueBypassToken, setChatAuthToken } from './QueueTokenUtils';
 import { getSignedInAgent } from '../agent/utils';
+import { COMMON_INPUT_MAX_LENGTH_SLOT_PROP } from '../constants';
 
 const createSocket = () => io({
   path: '/api/start_queue',
@@ -185,6 +186,7 @@ function NameInputModal({ setFirstName, setLastName, setOpen }) {
           <FormControl>
             <FormLabel>First Name</FormLabel>
             <Input
+              slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
               autoFocus
               required
               type="text"
@@ -195,6 +197,7 @@ function NameInputModal({ setFirstName, setLastName, setOpen }) {
           <FormControl>
             <FormLabel>Last Name</FormLabel>
             <Input
+              slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
               required
               type="text"
               placeholder="Doe"

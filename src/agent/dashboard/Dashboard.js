@@ -15,6 +15,7 @@ import ClickAwayListener from '@mui/base/ClickAwayListener';
 import PopperUnstyled from '@mui/base/PopperUnstyled';
 import { checkPasswordRequirements, deleteSignedInAgentAuthToken, getSignedInAgent } from '../utils';
 import authorizedAxios from '../../auth/RequestInterceptor';
+import { COMMON_INPUT_MAX_LENGTH_SLOT_PROP } from '../../constants';
 
 function Dashboard() {
   // Check if user is signed in
@@ -258,6 +259,7 @@ function ChangePasswordModal({ setOpen }) {
           <FormControl>
             <FormLabel>Current Password</FormLabel>
             <Input
+              slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
               autoFocus
               required
               type="password"
@@ -268,6 +270,7 @@ function ChangePasswordModal({ setOpen }) {
           <FormControl>
             <FormLabel>New Password</FormLabel>
             <Input
+              slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
               required
               type="password"
               placeholder="Password"
@@ -277,6 +280,7 @@ function ChangePasswordModal({ setOpen }) {
           <FormControl>
             <FormLabel>Confirm New Password</FormLabel>
             <Input
+              slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
               required
               type="password"
               placeholder="Password"

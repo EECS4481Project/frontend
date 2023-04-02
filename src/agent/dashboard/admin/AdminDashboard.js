@@ -8,6 +8,7 @@ import ShieldIcon from '@mui/icons-material/Shield';
 import PropTypes from 'prop-types';
 import { getSignedInAgent } from '../../utils';
 import authorizedAxios from '../../../auth/RequestInterceptor';
+import { COMMON_INPUT_MAX_LENGTH_SLOT_PROP } from '../../../constants';
 
 function AdminDashboard() {
   const agent = getSignedInAgent();
@@ -217,6 +218,7 @@ function UnregisterAgentForm() {
         <FormControl>
           <FormLabel>Username</FormLabel>
           <Input
+            slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
             required
             type="username"
             placeholder="Username"
@@ -227,6 +229,7 @@ function UnregisterAgentForm() {
         <FormControl>
           <FormLabel>Password</FormLabel>
           <Input
+            slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
             readOnly
             type="text"
             placeholder="To be generated"
@@ -298,6 +301,7 @@ function DeleteAgentForm() {
         <FormControl>
           <FormLabel>Username</FormLabel>
           <Input
+            slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
             required
             type="username"
             placeholder="Username"
@@ -383,6 +387,7 @@ function NewAgentForm() {
         <FormControl>
           <FormLabel>Username</FormLabel>
           <Input
+            slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
             required
             type="username"
             placeholder="Username"
@@ -393,6 +398,7 @@ function NewAgentForm() {
         <FormControl>
           <FormLabel>First Name</FormLabel>
           <Input
+            slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
             required
             type="text"
             placeholder="John"
@@ -403,6 +409,7 @@ function NewAgentForm() {
         <FormControl>
           <FormLabel>Last Name</FormLabel>
           <Input
+            slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
             required
             type="text"
             placeholder="Doe"
@@ -413,6 +420,7 @@ function NewAgentForm() {
         <FormControl>
           <FormLabel>Password</FormLabel>
           <Input
+            slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
             readOnly
             type="text"
             placeholder="To be generated"
