@@ -14,7 +14,7 @@ import AttachFile from '@mui/icons-material/AttachFile';
 import fileDownload from 'js-file-download';
 import { getSignedInAgent, getSignedInAgentAuthToken } from '../../utils';
 import authorizedAxios from '../../../auth/RequestInterceptor';
-import { TOAST_CONFIG, TOAST_PERSISTENT_CONFIG } from '../../../constants';
+import { MESSAGING_INPUT_MAX_LENGTH_SLOT_PROP, TOAST_CONFIG, TOAST_PERSISTENT_CONFIG } from '../../../constants';
 
 const createSocket = () => io({
   path: '/api/start_messaging',
@@ -270,14 +270,16 @@ function SideBar({
             <Button
               variant={chattingWith === user ? 'solid' : 'plain'}
               color="neutral"
-              sx={{ justifyContent: 'flex-start', width: '100%' }}
+              sx={{ justifyContent: 'flex-start', width: '100%', minWidth: '0' }}
               onClick={() => { setChattingWith(user); }}
               endDecorator={
                 Object.prototype.hasOwnProperty.call(unreadMessages, user)
               && <Badge sx={{ marginLeft: '10px' }} badgeContent={unreadMessages[user]} />
             }
             >
-              {user}
+              <Typography sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                {user}
+              </Typography>
             </Button>
             <Button
               color="danger"
@@ -392,6 +394,7 @@ function ChatScreen({
                   padding: '4px 8px 4px 8px',
                   margin: '2px 10px 2px 10px',
                   wordWrap: 'break-word',
+                  lineBreak: 'anywhere',
                 }}
                 >
                   {msg.fileId && (
@@ -419,6 +422,7 @@ function ChatScreen({
       }}
       >
         <Input
+          slotProps={MESSAGING_INPUT_MAX_LENGTH_SLOT_PROP}
           size="sm"
           sx={{ flexGrow: 1, flexShrink: 1 }}
           value={text}

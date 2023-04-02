@@ -16,3 +16,7 @@ export const TOAST_PERSISTENT_CONFIG = {
   progress: undefined,
   theme: 'colored',
 };
+
+export const COMMON_INPUT_MAX_LENGTH_SLOT_PROP = { input: { maxLength: 256 } };
+
+export const MESSAGING_INPUT_MAX_LENGTH_SLOT_PROP = { input: { maxLength: 1024 } };

@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { checkPasswordRequirements } from '../utils';
 import authorizedAxios from '../../auth/RequestInterceptor';
+import { COMMON_INPUT_MAX_LENGTH_SLOT_PROP } from '../../constants';
 
 function Login() {
   return (
@@ -89,6 +90,7 @@ function LoginForm() {
           <FormControl required>
             <FormLabel>Username</FormLabel>
             <Input
+              slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
               name="username"
               type="username"
               placeholder="Username"
@@ -98,6 +100,7 @@ function LoginForm() {
           <FormControl required>
             <FormLabel>Password</FormLabel>
             <Input
+              slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
               name="password"
               type="password"
               required
@@ -193,6 +196,7 @@ function RegisterForm() {
           <FormControl required>
             <FormLabel>Username</FormLabel>
             <Input
+              slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
               name="username"
               type="username"
               required
@@ -203,6 +207,7 @@ function RegisterForm() {
           <FormControl required>
             <FormLabel>Password</FormLabel>
             <Input
+              slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
               name="password"
               type="password"
               required
@@ -213,6 +218,7 @@ function RegisterForm() {
           <FormControl required>
             <FormLabel>New Password</FormLabel>
             <Input
+              slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
               name="newPassword"
               type="password"
               required
@@ -223,6 +229,7 @@ function RegisterForm() {
           <FormControl required>
             <FormLabel>Confirm New Password</FormLabel>
             <Input
+              slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
               name="newPassword"
               type="password"
               required
