@@ -16,3 +16,7 @@ export const TOAST_PERSISTENT_CONFIG = {
   progress: undefined,
   theme: 'colored',
 };
+
+export const NORMAL_INPUT = 256;
+
+export const MESSAGING_INPUT = 1024;

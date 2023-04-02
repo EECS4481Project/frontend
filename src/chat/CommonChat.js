@@ -9,7 +9,7 @@ import SendIcon from '@mui/icons-material/Send';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { toast } from 'react-toastify';
 import { getSignedInAgentAuthToken } from '../agent/utils';
-import { TOAST_CONFIG, TOAST_PERSISTENT_CONFIG } from '../constants';
+import { TOAST_CONFIG, TOAST_PERSISTENT_CONFIG, NORMAL_INPUT} from '../constants';
 
 ChatScreen.propTypes = {
   isAgent: PropTypes.bool,
@@ -115,6 +115,7 @@ export function ChatScreen({
       }}
       >
         <Input
+          slotProps = {{input: {NORMAL_INPUT}}}
           size="sm"
           sx={{ flexGrow: 1, flexShrink: 1 }}
           value={text}

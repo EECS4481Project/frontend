@@ -14,7 +14,7 @@ import AttachFile from '@mui/icons-material/AttachFile';
 import fileDownload from 'js-file-download';
 import { getSignedInAgent, getSignedInAgentAuthToken } from '../../utils';
 import authorizedAxios from '../../../auth/RequestInterceptor';
-import { TOAST_CONFIG, TOAST_PERSISTENT_CONFIG } from '../../../constants';
+import { TOAST_CONFIG, TOAST_PERSISTENT_CONFIG, MESSAGING_INPUT } from '../../../constants';
 
 const createSocket = () => io({
   path: '/api/start_messaging',
@@ -419,6 +419,7 @@ function ChatScreen({
       }}
       >
         <Input
+          slotProps = {{input: {MESSAGING_INPUT}}}
           size="sm"
           sx={{ flexGrow: 1, flexShrink: 1 }}
           value={text}
