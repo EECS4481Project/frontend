@@ -148,8 +148,8 @@ function AgentList({ endpoint, title, desc }) {
                   <td style={{ paddingLeft: '30px' }}>
                     {user.isAdmin ? <ShieldIcon /> : ''}
                   </td>
-                  <td>{user.username}</td>
-                  <td>{`${user.firstName} ${user.lastName}`}</td>
+                  <td style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{user.username}</td>
+                  <td style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{`${user.firstName} ${user.lastName}`}</td>
                 </tr>
               ))}
             </tbody>
@@ -248,7 +248,7 @@ function UnregisterAgentForm() {
         {errMsg !== ''
         && <Typography color="danger" fontSize="sm" marginTop={1}>{errMsg}</Typography>}
         {successMsg !== ''
-        && <Typography color="success" fontSize="sm" marginTop={1}>{successMsg}</Typography>}
+        && <Typography color="success" fontSize="sm" marginTop={1} sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{successMsg}</Typography>}
         <Button type="submit" sx={{ mt: 1, width: '100%' }}>Unregister Agent</Button>
       </form>
       )}
@@ -323,6 +323,7 @@ function DeleteAgentForm() {
           color="success"
           fontSize="sm"
           marginTop={1}
+          sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}
         >
           {successMsg}
         </Typography>
@@ -439,7 +440,7 @@ function NewAgentForm() {
         {errMsg !== ''
         && <Typography color="danger" fontSize="sm" marginTop={1}>{errMsg}</Typography>}
         {successMsg !== ''
-        && <Typography color="success" fontSize="sm" marginTop={1}>{successMsg}</Typography>}
+        && <Typography color="success" fontSize="sm" marginTop={1} sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{successMsg}</Typography>}
         <Button type="submit" sx={{ mt: 1, width: '100%' }}>Register</Button>
       </form>
       )}

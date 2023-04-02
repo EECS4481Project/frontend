@@ -48,6 +48,7 @@ export function ChatScreen({
       height: '100%',
       display: 'flex',
       flexDirection: 'column',
+      minWidth: '0',
     }}
     >
       <Box sx={{ flexGrow: 100000000, flexShrink: 1 }} />
@@ -81,7 +82,7 @@ export function ChatScreen({
               <div key={i} style={{ width: '100%' }}>
                 {showUsername
                   && (
-                    <Typography color="neutral" textAlign="center" sx={{ width: '100%' }}>
+                    <Typography color="neutral" textAlign="center" sx={{ width: '100%', textOverflow: 'ellipsis', overflow: 'hidden' }}>
                       {isAgent ? `Agent: ${msg.correspondentUsername}`
                         : `Chatting with ${msg.correspondentUsername}`}
                     </Typography>

@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Stack } from '@mui/system';
 import {
+  Box,
   Button, CircularProgress, Divider, FormControl, FormLabel, Input,
   MenuItem, MenuList, Modal, ModalDialog, Typography,
 } from '@mui/joy';
@@ -46,44 +47,53 @@ function Dashboard() {
         <Typography level="h3">Dashboard</Typography>
         <Divider orientation="vertical" sx={{ ml: 3 }} />
         {!agent.isAdmin && (
-        <Stack
-          direction="row"
-          justifyContent="center"
-          display="flex"
-          width="100%"
-          sx={{ ml: 3, mr: 3 }}
-        >
-          <Button
-            color={location.pathname === '/dashboard/chat' ? 'primary' : 'neutral'}
-            onClick={() => { navigate('/dashboard/chat'); }}
-            variant="plain"
-            size="sm"
-            sx={{ mr: 1 }}
+          <Stack
+            direction="row"
+            justifyContent="center"
+            display="flex"
+            flexGrow="1"
+            sx={{ ml: 3, mr: 3 }}
           >
-            Chat
+            <Button
+              color={location.pathname === '/dashboard/chat' ? 'primary' : 'neutral'}
+              onClick={() => { navigate('/dashboard/chat'); }}
+              variant="plain"
+              size="sm"
+              sx={{ mr: 1 }}
+            >
+              Chat
 
-          </Button>
-          <Button
-            color={location.pathname === '/dashboard/messages' ? 'primary' : 'neutral'}
-            onClick={() => { navigate('/dashboard/messages'); }}
-            size="sm"
-            variant="plain"
-          >
-            Messages
+            </Button>
+            <Button
+              color={location.pathname === '/dashboard/messages' ? 'primary' : 'neutral'}
+              onClick={() => { navigate('/dashboard/messages'); }}
+              size="sm"
+              variant="plain"
+            >
+              Messages
 
-          </Button>
-        </Stack>
+            </Button>
+          </Stack>
         )}
         {agent.isAdmin && (
-        <Stack
-          direction="row"
-          justifyContent="center"
-          display="flex"
-          width="100%"
-          sx={{ ml: 3, mr: 3 }}
-        />
+          <Stack
+            direction="row"
+            justifyContent="center"
+            display="flex"
+            flexGrow="1"
+            sx={{ ml: 3, mr: 3 }}
+          />
         )}
-        <Typography sx={{ mt: '7px' /* hacky way to center it */ }}>{agent.username}</Typography>
+        <Box sx={{ minWidth: '0' }}>
+          <Typography sx={{
+            mt: '7px', /* hacky way to center it */
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+          >
+            {agent.username}
+          </Typography>
+        </Box>
         <ProfileMenu />
       </Stack>
       <div style={{ height: 'calc(100vh - 56px)', width: '100vw', display: 'flex' }}>
@@ -112,7 +122,7 @@ function ProfileMenu() {
 
   const handleLogout = () => {
     handleClose();
-    authorizedAxios.post('/api/auth/logout').catch(() => {}).finally(() => {
+    authorizedAxios.post('/api/auth/logout').catch(() => { }).finally(() => {
       deleteSignedInAgentAuthToken();
       navigate('/login', { replace: true });
     });
@@ -240,74 +250,74 @@ function ChangePasswordModal({ setOpen }) {
         Change Password
       </Typography>
       {isLoading && (
-      <div style={{
-        display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%',
-      }}
-      >
-        <CircularProgress />
-      </div>
+        <div style={{
+          display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%',
+        }}
+        >
+          <CircularProgress />
+        </div>
       )}
       {!isLoading
-      && (
-      <form
-        onSubmit={(event) => {
-          event.preventDefault();
-          changePassword(currentPassword, newPassword, confirmedNewPassword);
-        }}
-      >
-        <Stack>
-          <FormControl>
-            <FormLabel>Current Password</FormLabel>
-            <Input
-              slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
-              autoFocus
-              required
-              type="password"
-              placeholder="Current Password"
-              onChange={(e) => setCurrentPassword(e.target.value)}
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel>New Password</FormLabel>
-            <Input
-              slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
-              required
-              type="password"
-              placeholder="Password"
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Confirm New Password</FormLabel>
-            <Input
-              slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
-              required
-              type="password"
-              placeholder="Password"
-              onChange={(e) => setConfirmedNewPassword(e.target.value)}
-            />
-          </FormControl>
-          <Typography textColor="neutral" fontSize="sm">Password Requirements:</Typography>
-          {passwordReqs.requirements.map((name) => (
-            <Typography
-              key={name}
-              color={passwordReqs[name].met ? 'neutral:500' : 'neutral'}
-              fontSize="sm"
-            >
-              -
-              {' '}
-              {passwordReqs[name].text}
-            </Typography>
-          ))}
-          {errMsg !== ''
-          && <Typography color="danger" fontSize="sm" marginTop={1}>{errMsg}</Typography>}
-          <FormControl>
-            {!passwordReqsMet && <Button disabled sx={{ mt: 1 }}>Change Password</Button>}
-            {passwordReqsMet && <Button type="submit" sx={{ mt: 1 }}>Change Password</Button>}
-          </FormControl>
-        </Stack>
-      </form>
-      )}
+        && (
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              changePassword(currentPassword, newPassword, confirmedNewPassword);
+            }}
+          >
+            <Stack>
+              <FormControl>
+                <FormLabel>Current Password</FormLabel>
+                <Input
+                  slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
+                  autoFocus
+                  required
+                  type="password"
+                  placeholder="Current Password"
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel>New Password</FormLabel>
+                <Input
+                  slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
+                  required
+                  type="password"
+                  placeholder="Password"
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Confirm New Password</FormLabel>
+                <Input
+                  slotProps={COMMON_INPUT_MAX_LENGTH_SLOT_PROP}
+                  required
+                  type="password"
+                  placeholder="Password"
+                  onChange={(e) => setConfirmedNewPassword(e.target.value)}
+                />
+              </FormControl>
+              <Typography textColor="neutral" fontSize="sm">Password Requirements:</Typography>
+              {passwordReqs.requirements.map((name) => (
+                <Typography
+                  key={name}
+                  color={passwordReqs[name].met ? 'neutral:500' : 'neutral'}
+                  fontSize="sm"
+                >
+                  -
+                  {' '}
+                  {passwordReqs[name].text}
+                </Typography>
+              ))}
+              {errMsg !== ''
+                && <Typography color="danger" fontSize="sm" marginTop={1}>{errMsg}</Typography>}
+              <FormControl>
+                {!passwordReqsMet && <Button disabled sx={{ mt: 1 }}>Change Password</Button>}
+                {passwordReqsMet && <Button type="submit" sx={{ mt: 1 }}>Change Password</Button>}
+              </FormControl>
+            </Stack>
+          </form>
+        )}
     </ModalDialog>
   );
 }

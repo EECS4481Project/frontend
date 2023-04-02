@@ -270,14 +270,16 @@ function SideBar({
             <Button
               variant={chattingWith === user ? 'solid' : 'plain'}
               color="neutral"
-              sx={{ justifyContent: 'flex-start', width: '100%' }}
+              sx={{ justifyContent: 'flex-start', width: '100%', minWidth: '0' }}
               onClick={() => { setChattingWith(user); }}
               endDecorator={
                 Object.prototype.hasOwnProperty.call(unreadMessages, user)
               && <Badge sx={{ marginLeft: '10px' }} badgeContent={unreadMessages[user]} />
             }
             >
-              {user}
+              <Typography sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                {user}
+              </Typography>
             </Button>
             <Button
               color="danger"

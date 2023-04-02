@@ -272,14 +272,16 @@ function SideBar({
             <Button
               variant={chattingWith === user.userId ? 'solid' : 'plain'}
               color="neutral"
-              sx={{ justifyContent: 'flex-start', width: '100%' }}
+              sx={{ justifyContent: 'flex-start', width: '100%', minWidth: '0' }}
               onClick={() => { setChattingWith(user.userId); }}
               endDecorator={
                 Object.prototype.hasOwnProperty.call(unreadMessages, user.userId)
                 && <Badge sx={{ marginLeft: '10px' }} badgeContent={unreadMessages[user.userId]} />
             }
             >
-              {`${user.firstName} ${user.lastName}`}
+              <Typography sx={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                {`${user.firstName} ${user.lastName}`}
+              </Typography>
             </Button>
             <Tooltip title="End Chat">
               <Button
@@ -353,7 +355,7 @@ function TransferToAgentModal({
 
   return (
     <ModalDialog sx={{ maxWidth: 500 }}>
-      <Typography component="h2" sx={{ marginBottom: '5px' }}>
+      <Typography component="h2" sx={{ marginBottom: '5px', textOverflow: 'ellipsis', overflow: 'hidden' }}>
         Transfer
         {' '}
         {`${user.firstName} ${user.lastName}`}
