@@ -10,7 +10,7 @@ COPY ./ ./
 RUN npm install && npm run build
 
 # pull nginx image
-FROM nginx
+FROM nginx:1-bullseye
 
 # Move built site to nginx html dir
 WORKDIR /usr/share/nginx/html
